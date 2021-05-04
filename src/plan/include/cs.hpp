@@ -10,15 +10,15 @@ struct ConfigurationSpace {
 
     ConfigurationSpace(float agent_radius) : agent_radius(agent_radius) {}
 
-    bool is_colliding(const Vec3& point, const Obstacle& obstacle) { return (point - obstacle.center).norm() <= obstacle.radius + agent_radius; }
+    bool is_colliding(const Vec2& point, const Obstacle& obstacle) { return (point - obstacle.center).norm() <= obstacle.radius + agent_radius; }
 
-    bool is_colliding(const Vec3& p1, const Vec3& p2) {
+    bool is_colliding(const Vec2& p1, const Vec2& p2) {
         for (const auto& obstacle : obstacles) {
             if (is_colliding(p1, obstacle) || is_colliding(p2, obstacle)) {
                 return true;
             }
-            Vec3 pb_pa = p2 - p1;
-            Vec3 pa_pc = p1 - obstacle.center;
+            Vec2 pb_pa = p2 - p1;
+            Vec2 pa_pc = p1 - obstacle.center;
             float r = obstacle.radius + agent_radius;
             float a = pb_pa.dot(pb_pa);
             float c = pa_pc.dot(pa_pc) - r * r;

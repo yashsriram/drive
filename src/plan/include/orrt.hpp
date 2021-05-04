@@ -7,7 +7,7 @@
 
 #include "cs.hpp"
 #include "graph.hpp"
-#include "vec3.hpp"
+#include "vec2.hpp"
 
 struct ORRT {
     /* int get_finish_vertex() { */
@@ -34,15 +34,15 @@ struct ORRT {
     constexpr static bool DRAW_TREE = true;
 
     const ros::Publisher viz;
-    const Vec3 start_position;
-    const Vec3 finish_position;
+    const Vec2 start_position;
+    const Vec2 finish_position;
     bool is_finish_reached;
     Graph graph;
 
-    ORRT(const ros::Publisher &viz, const Vec3 &start_position, const Vec3 &finish_position)
+    ORRT(const ros::Publisher &viz, const Vec2 &start_position, const Vec2 &finish_position)
         : viz(viz), start_position(start_position), finish_position(finish_position), graph(start_position, 0), is_finish_reached(false) {}
 
-    void generate_next_node(Vec3 new_position, ConfigurationSpace cs) {
+    void generate_next_node(Vec2 new_position, ConfigurationSpace cs) {
         // Nearest vertex search
         std::stack<int> fringe;
         std::vector<int> neighbours_ids;
@@ -84,7 +84,7 @@ struct ORRT {
         }
         // Growth limit
         Vertex &min_cost_vertex = graph.get(min_cost_vertex_id);
-        Vec3 growth = (new_position - min_cost_vertex.position);
+        Vec2 growth = (new_position - min_cost_vertex.position);
         if (growth.norm() > GROWTH_LIMIT) {
             new_position = (min_cost_vertex.position + growth.normalize() * GROWTH_LIMIT);
         }
@@ -112,11 +112,11 @@ struct ORRT {
         }
     }
 
-    void grow_tree(std::vector<Vec3> new_positions, ConfigurationSpace cs) {
+    void grow_tree(std::vector<Vec2> new_positions, ConfigurationSpace cs) {
         std::random_device rd;
         std::mt19937 e2(rd());
         std::uniform_real_distribution<> dist(0, 1);
-        for (Vec3 new_position : new_positions) {
+        for (Vec2 new_position : new_positions) {
             // Generate node at finish position with a small probability
             if (dist(e2) <= 0.01) {
                 generate_next_node(finish_position, cs);
@@ -171,12 +171,12 @@ struct ORRT {
                     geometry_msgs::Point start;
                     start.x = node.position.x;
                     start.y = node.position.y;
-                    start.z = node.position.z;
+                    start.z = 0;
                     m.points.push_back(start);
                     geometry_msgs::Point end;
                     end.x = child.position.x;
                     end.y = child.position.y;
-                    end.z = child.position.z;
+                    end.z = 0;
                     m.points.push_back(end);
 
                     m.scale.x = 0.01;
@@ -213,7 +213,7 @@ struct ORRT {
         s.scale.z = END_POINT_HINT_SIZE;
         s.pose.position.x = start_position.x;
         s.pose.position.y = start_position.y;
-        s.pose.position.z = start_position.z;
+        s.pose.position.z = 0;
         s.pose.orientation.w = 1.0;
         s.color.b = 1;
         s.color.a = 1.0;
@@ -231,7 +231,7 @@ struct ORRT {
         f.scale.z = END_POINT_HINT_SIZE;
         f.pose.position.x = finish_position.x;
         f.pose.position.y = finish_position.y;
-        f.pose.position.z = finish_position.z;
+        f.pose.position.z = 0;
         f.pose.orientation.w = 1.0;
         f.color.g = 1;
         f.color.a = 1.0;
@@ -240,10 +240,10 @@ struct ORRT {
         viz.publish(arr);
     }
 
-    /*     public List<Vec3> search() { */
+    /*     public List<Vec2> search() { */
     /*         Vertex finishVertex = get_finish_vertex(); */
     /*         if (finishVertex != null) { */
-    /*             List<Vec3> path = new ArrayList<>(); */
+    /*             List<Vec2> path = new ArrayList<>(); */
     /*             path.add(0, finishVertex.position); */
     /*             Vertex node = finishVertex.parent; */
     /*             while (node != null) { */

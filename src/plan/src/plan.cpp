@@ -6,19 +6,19 @@
 #include "cs.hpp"
 #include "obstacle.hpp"
 #include "orrt.hpp"
-#include "vec3.hpp"
+#include "vec2.hpp"
 
 using namespace std;
 
 const float AGENT_RADIUS = 0.25;
-const Vec3 start(0, 0, 0);
-const Vec3 finish(5, 5, 0);
+const Vec2 start(0, 0);
+const Vec2 finish(5, 5);
 ConfigurationSpace cs(AGENT_RADIUS);
 
 void update_obstacles(const visualization_msgs::MarkerArray& msg) {
     cs.obstacles.clear();
     for (const auto& m : msg.markers) {
-        cs.obstacles.push_back(Obstacle(Vec3(m.pose.position.x, m.pose.position.y, 0), max(m.scale.x, m.scale.y) / 2.0));
+        cs.obstacles.push_back(Obstacle(Vec2(m.pose.position.x, m.pose.position.y), max(m.scale.x, m.scale.y) / 2.0));
     }
     std::cout << "got " << cs.obstacles.size() << " obstacles" << std::endl;
 }
@@ -43,9 +43,9 @@ int main(int argc, char** argv) {
     while (ros::ok()) {
         // Grow tree
         ORRT orrt(rrt_viz, start, finish);
-        std::vector<Vec3> points;
+        std::vector<Vec2> points;
         for (int i = 0; i < 500; ++i) {
-            points.push_back(Vec3(dist(e2) * 5.0, dist(e2) * 5.0, 0));
+            points.push_back(Vec2(dist(e2) * 5.0, dist(e2) * 5.0));
         }
         orrt.grow_tree(points, cs);
         // Draw RRT*

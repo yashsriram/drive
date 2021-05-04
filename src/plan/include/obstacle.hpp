@@ -1,17 +1,14 @@
 #pragma once
 
-#include "vec3.hpp"
+#include "vec2.hpp"
 
 struct Obstacle {
-    const Vec3 center;
+    const Vec2 center;
     const float radius;
 
-    Obstacle(const Vec3& center, float radius) : center(center), radius(radius) {
+    Obstacle(const Vec2& center, float radius) : center(center), radius(radius) {
         if (radius < 0) {
             throw std::runtime_error("Bad obstacle radius");
-        }
-        if (center.z != 0) {
-            throw std::runtime_error("Flying obstacle");
         }
     }
 };
