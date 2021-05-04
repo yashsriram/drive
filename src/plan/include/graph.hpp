@@ -62,5 +62,5 @@ struct Graph {
 
     Vertex &get(int id) { return vertices[id]; }
 
-    unsigned int size() { return vertices.size(); }
+    int size() { return vertices.size(); }
 };
