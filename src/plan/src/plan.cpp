@@ -24,15 +24,19 @@ void update_circles(const visualization_msgs::MarkerArray& msg) {
 }
 
 int main(int argc, char** argv) {
+    std::random_device rd;
+    std::mt19937 e2(rd());
+    std::uniform_real_distribution<> dist(0, 1);
+
     ros::init(argc, argv, "plan_node");
 
     ros::NodeHandle n;
     /* ros::Subscriber circles_sub = n.subscribe("/circles_publisher/circles", 1, update_circles); */
     ros::Publisher rrt_viz = n.advertise<visualization_msgs::MarkerArray>("/plan/debug", 30);
+    ros::Publisher cs_viz = n.advertise<visualization_msgs::MarkerArray>("/cs/debug", 1);
 
-    std::random_device rd;
-    std::mt19937 e2(rd());
-    std::uniform_real_distribution<> dist(0, 1);
+    cs.circles.push_back(Circle(Vec2(1.0, 1.0), 0.25));
+    cs.circles.push_back(Circle(Vec2(2.0, 2.0), 0.25));
 
     ros::Rate loop_rate(30);
     /* for (int i = 0; i < 50; ++i) { */
@@ -50,6 +54,7 @@ int main(int argc, char** argv) {
         orrt.grow_tree(points, cs);
         // Draw RRT*
         orrt.draw();
+        cs.draw(cs_viz);
         // Sleep
         loop_rate.sleep();
     }

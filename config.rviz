@@ -7,7 +7,8 @@ Panels:
         - /MarkerArray1
         - /MarkerArray1/Status1
         - /MarkerArray1/Namespaces1
-      Splitter Ratio: 0.5
+        - /MarkerArray2
+      Splitter Ratio: 0.6130267977714539
     Tree Height: 722
   - Class: rviz/Selection
     Name: Selection
@@ -70,6 +71,15 @@ Visualization Manager:
         ends: true
       Queue Size: 15
       Value: true
+    - Class: rviz/MarkerArray
+      Enabled: true
+      Marker Topic: /cs/debug
+      Name: MarkerArray
+      Namespaces:
+        circles: true
+        cs_circles: true
+      Queue Size: 5
+      Value: true
   Enabled: true
   Global Options:
     Background Color: 48; 48; 48
@@ -98,7 +108,7 @@ Visualization Manager:
   Views:
     Current:
       Class: rviz/ThirdPersonFollower
-      Distance: 8.486011505126953
+      Distance: 8.415231704711914
       Enable Stereo Rendering:
         Stereo Eye Separation: 0.05999999865889549
         Stereo Focal Distance: 1
@@ -114,9 +124,9 @@ Visualization Manager:
       Invert Z Axis: false
       Name: Current View
       Near Clip Distance: 0.009999999776482582
-      Pitch: 1.5697963237762451
+      Pitch: 1.2047964334487915
       Target Frame: gps
-      Yaw: 4.6985764503479
+      Yaw: 4.2735819816589355
     Saved: ~
 Window Geometry:
   Displays:

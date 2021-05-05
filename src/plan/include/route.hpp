@@ -1,6 +1,6 @@
 #pragma once
 
-#include "line.hpp"
+#include "obstacles/line.hpp"
 #include "vec2.hpp"
 
 struct Route {
