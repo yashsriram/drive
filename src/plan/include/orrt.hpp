@@ -33,14 +33,12 @@ struct ORRT {
     constexpr static float NEIGHBOUR_RADIUS = 1;
     constexpr static bool DRAW_TREE = true;
 
-    const ros::Publisher viz;
     const Vec2 start_position;
     const Vec2 finish_position;
     bool is_finish_reached;
     Graph graph;
 
-    ORRT(const ros::Publisher &viz, const Vec2 &start_position, const Vec2 &finish_position)
-        : viz(viz), start_position(start_position), finish_position(finish_position), graph(start_position, 0), is_finish_reached(false) {}
+    ORRT(const Vec2 &start_position, const Vec2 &finish_position) : start_position(start_position), finish_position(finish_position), graph(start_position, 0), is_finish_reached(false) {}
 
     void generate_next_node(Vec2 new_position, ConfigurationSpace cs) {
         // Nearest vertex search
@@ -143,7 +141,7 @@ struct ORRT {
         }
     }
 
-    void draw() {
+    void draw(const ros::Publisher &viz) {
         // Viz tree
         if (DRAW_TREE) {
             std::stack<int> fringe;

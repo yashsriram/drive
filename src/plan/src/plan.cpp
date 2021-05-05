@@ -46,14 +46,14 @@ int main(int argc, char** argv) {
     /* } */
     while (ros::ok()) {
         // Grow tree
-        ORRT orrt(rrt_viz, start, finish);
+        ORRT orrt(start, finish);
         std::vector<Vec2> points;
         for (int i = 0; i < 500; ++i) {
             points.push_back(Vec2(dist(e2) * 5.0, dist(e2) * 5.0));
         }
         orrt.grow_tree(points, cs);
         // Draw RRT*
-        orrt.draw();
+        orrt.draw(rrt_viz);
         cs.draw(cs_viz);
         // Sleep
         loop_rate.sleep();
