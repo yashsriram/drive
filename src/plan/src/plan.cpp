@@ -4,7 +4,7 @@
 #include <ros/ros.h>
 
 #include "cs.hpp"
-#include "obstacle.hpp"
+#include "obstacles/circle.hpp"
 #include "orrt.hpp"
 #include "vec2.hpp"
 
@@ -15,19 +15,19 @@ const Vec2 start(0, 0);
 const Vec2 finish(5, 5);
 ConfigurationSpace cs(AGENT_RADIUS);
 
-void update_obstacles(const visualization_msgs::MarkerArray& msg) {
-    cs.obstacles.clear();
+void update_circles(const visualization_msgs::MarkerArray& msg) {
+    cs.circles.clear();
     for (const auto& m : msg.markers) {
-        cs.obstacles.push_back(Obstacle(Vec2(m.pose.position.x, m.pose.position.y), max(m.scale.x, m.scale.y) / 2.0));
+        cs.circles.push_back(Circle(Vec2(m.pose.position.x, m.pose.position.y), max(m.scale.x, m.scale.y) / 2.0));
     }
-    std::cout << "got " << cs.obstacles.size() << " obstacles" << std::endl;
+    std::cout << "got " << cs.circles.size() << " circles" << std::endl;
 }
 
 int main(int argc, char** argv) {
     ros::init(argc, argv, "plan_node");
 
     ros::NodeHandle n;
-    /* ros::Subscriber obstacles_sub = n.subscribe("/obstacles_publisher/obstacles", 1, update_obstacles); */
+    /* ros::Subscriber circles_sub = n.subscribe("/circles_publisher/circles", 1, update_circles); */
     ros::Publisher rrt_viz = n.advertise<visualization_msgs::MarkerArray>("/plan/debug", 30);
 
     std::random_device rd;
@@ -36,7 +36,7 @@ int main(int argc, char** argv) {
 
     ros::Rate loop_rate(30);
     /* for (int i = 0; i < 50; ++i) { */
-    /*     // Get obstacles */
+    /*     // Get circles */
     /*     ros::spinOnce(); */
     /*     loop_rate.sleep(); */
     /* } */
