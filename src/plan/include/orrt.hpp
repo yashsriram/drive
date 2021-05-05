@@ -40,7 +40,7 @@ struct ORRT {
 
     ORRT(const Vec2 &start_position, const Vec2 &finish_position) : start_position(start_position), finish_position(finish_position), graph(start_position, 0), is_finish_reached(false) {}
 
-    void generate_next_node(Vec2 new_position, ConfigurationSpace cs) {
+    void generate_next_node(Vec2 new_position, const ConfigurationSpace &cs) {
         // Nearest vertex search
         std::stack<int> fringe;
         std::vector<int> neighbours_ids;
@@ -70,10 +70,10 @@ struct ORRT {
         }
         // Min cost vertex search
         int min_cost_vertex_id = nearest_vertex_id;
-        Vertex &nearest_vertex = graph.get(nearest_vertex_id);
+        const Vertex &nearest_vertex = graph.get(nearest_vertex_id);
         float min_cost = nearest_vertex.cost_from_start + (nearest_vertex.position - new_position).norm();
         for (int neighbour_id : neighbours_ids) {
-            Vertex &neighbour = graph.get(neighbour_id);
+            const Vertex &neighbour = graph.get(neighbour_id);
             float cost = neighbour.cost_from_start + (neighbour.position - new_position).norm();
             if (cost < min_cost) {
                 min_cost_vertex_id = neighbour_id;
@@ -81,7 +81,7 @@ struct ORRT {
             }
         }
         // Growth limit
-        Vertex &min_cost_vertex = graph.get(min_cost_vertex_id);
+        const Vertex &min_cost_vertex = graph.get(min_cost_vertex_id);
         Vec2 growth = (new_position - min_cost_vertex.position);
         if (growth.norm() > GROWTH_LIMIT) {
             new_position = (min_cost_vertex.position + growth.normalize() * GROWTH_LIMIT);
@@ -93,10 +93,10 @@ struct ORRT {
         // Linking min cost vertex and new vertex
         float distance_from_start = min_cost_vertex.cost_from_start + (min_cost_vertex.position - new_position).norm();
         int new_vertex_id = graph.add_child(min_cost_vertex_id, new_position, distance_from_start);
-        Vertex &new_vertex = graph.get(new_vertex_id);
+        const Vertex &new_vertex = graph.get(new_vertex_id);
         // Rewiring
         for (int neighbour_id : neighbours_ids) {
-            Vertex &neighbour = graph.get(neighbour_id);
+            Vertex &neighbour = graph.get_mut(neighbour_id);
             float cost = distance_from_start + (new_position - neighbour.position).norm();
             if (cost < neighbour.cost_from_start) {
                 if (!cs.is_colliding(neighbour.position, new_vertex.position)) {
@@ -110,11 +110,11 @@ struct ORRT {
         }
     }
 
-    void grow_tree(std::vector<Vec2> new_positions, ConfigurationSpace cs) {
+    void grow_tree(const std::vector<Vec2> &new_positions, const ConfigurationSpace &cs) {
         std::random_device rd;
         std::mt19937 e2(rd());
         std::uniform_real_distribution<> dist(0, 1);
-        for (Vec2 new_position : new_positions) {
+        for (const Vec2 &new_position : new_positions) {
             // Generate node at finish position with a small probability
             if (dist(e2) <= 0.01) {
                 generate_next_node(finish_position, cs);
@@ -129,10 +129,10 @@ struct ORRT {
         while (fringe.size() > 0) {
             int node_id = fringe.top();
             fringe.pop();
-            Vertex &node = graph.get(node_id);
+            const Vertex &node = graph.get(node_id);
 
             for (int i = 0; i < node.children_ids.size(); ++i) {
-                Vertex &child = graph.get(node.children_ids[i]);
+                const Vertex &child = graph.get(node.children_ids[i]);
             }
 
             for (int child_id : node.children_ids) {
@@ -151,10 +151,10 @@ struct ORRT {
             while (fringe.size() > 0) {
                 int node_id = fringe.top();
                 fringe.pop();
-                Vertex &node = graph.get(node_id);
+                const Vertex &node = graph.get(node_id);
 
                 for (int i = 0; i < node.children_ids.size(); ++i) {
-                    Vertex &child = graph.get(node.children_ids[i]);
+                    const Vertex &child = graph.get(node.children_ids[i]);
                     visualization_msgs::Marker m;
 
                     m.header.frame_id = "map";

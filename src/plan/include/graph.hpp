@@ -27,16 +27,16 @@ struct Vertex {
 
     Vertex() : id(vertex_id_generator::null_index), position(Vec2(0, 0)), cost_from_start(0), parent_id(vertex_id_generator::null_index) {}
 
-    Vertex(int id, const Vec2 &position, float cost_from_start) : id(id), position(position), cost_from_start(cost_from_start), parent_id(vertex_id_generator::null_index) {}
+    Vertex(const int id, const Vec2 &position, const float cost_from_start) : id(id), position(position), cost_from_start(cost_from_start), parent_id(vertex_id_generator::null_index) {}
 };
 
 struct Graph {
     std::unordered_map<int, Vertex> vertices;
     const int root_id;
 
-    Graph(const Vec2 &position, float cost_from_start) : root_id(vertex_id_generator::get_next_id()) { vertices[root_id] = Vertex(root_id, position, cost_from_start); }
+    Graph(const Vec2 &position, const float cost_from_start) : root_id(vertex_id_generator::get_next_id()) { vertices[root_id] = Vertex(root_id, position, cost_from_start); }
 
-    int add_child(int parent_id, const Vec2 &position, float cost_from_start) {
+    int add_child(const int parent_id, const Vec2 &position, const float cost_from_start) {
         int child_id = vertex_id_generator::get_next_id();
         vertices[child_id] = Vertex(child_id, position, cost_from_start);
         vertices[child_id].parent_id = parent_id;
@@ -44,7 +44,7 @@ struct Graph {
         return child_id;
     }
 
-    void reparent(int child_id, int new_parent_id) {
+    void reparent(const int child_id, const int new_parent_id) {
         int parent_id = vertices[child_id].parent_id;
         int index_to_remove = -1;
         for (int i = 0; i < vertices[parent_id].children_ids.size(); ++i) {
@@ -60,7 +60,9 @@ struct Graph {
 
     Vertex &root() { return vertices[root_id]; }
 
-    Vertex &get(int id) { return vertices[id]; }
+    const Vertex &get(const int id) { return vertices[id]; }
 
-    int size() { return vertices.size(); }
+    Vertex &get_mut(const int id) { return vertices[id]; }
+
+    int size() const { return vertices.size(); }
 };
