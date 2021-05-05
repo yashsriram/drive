@@ -183,8 +183,8 @@ struct ORRT {
                     m.pose.orientation.w = 1.0;
 
                     m.color.r = 1;
-                    m.color.g = 0;
-                    m.color.b = 0;
+                    m.color.g = 1;
+                    m.color.b = 1;
                     m.color.a = 1.0;
 
                     arr.markers.push_back(m);

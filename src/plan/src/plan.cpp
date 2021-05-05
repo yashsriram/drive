@@ -13,15 +13,7 @@ using namespace std;
 const float AGENT_RADIUS = 0.25;
 const Vec2 start(0, 0);
 const Vec2 finish(5, 5);
-ConfigurationSpace cs(AGENT_RADIUS);
-
-void update_circles(const visualization_msgs::MarkerArray& msg) {
-    cs.circles.clear();
-    for (const auto& m : msg.markers) {
-        cs.circles.push_back(Circle(Vec2(m.pose.position.x, m.pose.position.y), max(m.scale.x, m.scale.y) / 2.0));
-    }
-    std::cout << "got " << cs.circles.size() << " circles" << std::endl;
-}
+ConfigurationSpace cs;
 
 int main(int argc, char** argv) {
     std::random_device rd;
@@ -31,19 +23,13 @@ int main(int argc, char** argv) {
     ros::init(argc, argv, "plan_node");
 
     ros::NodeHandle n;
-    /* ros::Subscriber circles_sub = n.subscribe("/circles_publisher/circles", 1, update_circles); */
     ros::Publisher rrt_viz = n.advertise<visualization_msgs::MarkerArray>("/plan/debug", 30);
     ros::Publisher cs_viz = n.advertise<visualization_msgs::MarkerArray>("/cs/debug", 1);
 
-    cs.circles.push_back(Circle(Vec2(1.0, 1.0), 0.25));
-    cs.circles.push_back(Circle(Vec2(2.0, 2.0), 0.25));
+    cs.add_circle(1.0, 1.0, 0.25, AGENT_RADIUS);
+    cs.add_circle(2.0, 2.0, 0.20, AGENT_RADIUS);
 
     ros::Rate loop_rate(30);
-    /* for (int i = 0; i < 50; ++i) { */
-    /*     // Get circles */
-    /*     ros::spinOnce(); */
-    /*     loop_rate.sleep(); */
-    /* } */
     while (ros::ok()) {
         // Grow tree
         ORRT orrt(start, finish);

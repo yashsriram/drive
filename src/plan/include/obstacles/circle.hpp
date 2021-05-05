@@ -12,15 +12,15 @@ struct Circle {
         }
     }
 
-    bool is_colliding(const Vec2& point, const float& agent_radius) const { return (point - center).norm() <= radius + agent_radius; }
+    bool is_colliding(const Vec2& point) const { return (point - center).norm() <= radius; }
 
-    bool is_colliding(const Vec2& p1, const Vec2& p2, const float& agent_radius) const {
-        if (is_colliding(p1, agent_radius) || is_colliding(p2, agent_radius)) {
+    bool is_colliding(const Vec2& p1, const Vec2& p2) const {
+        if (is_colliding(p1) || is_colliding(p2)) {
             return true;
         }
         Vec2 pb_pa = p2 - p1;
         Vec2 pa_pc = p1 - center;
-        float r = radius + agent_radius;
+        float r = radius;
         float a = pb_pa.dot(pb_pa);
         float c = pa_pc.dot(pa_pc) - r * r;
         float b = 2 * pb_pa.dot(pa_pc);
