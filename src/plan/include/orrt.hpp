@@ -87,7 +87,7 @@ struct ORRT {
             new_position = (min_cost_vertex.position + growth.normalize() * GROWTH_LIMIT);
         }
         // Collision detection
-        if (cs.is_colliding(min_cost_vertex.position, new_position)) {
+        if (cs.does_intersect(min_cost_vertex.position, new_position)) {
             return;
         }
         // Linking min cost vertex and new vertex
@@ -99,7 +99,7 @@ struct ORRT {
             Vertex &neighbour = graph.get_mut(neighbour_id);
             float cost = distance_from_start + (new_position - neighbour.position).norm();
             if (cost < neighbour.cost_from_start) {
-                if (!cs.is_colliding(neighbour.position, new_vertex.position)) {
+                if (!cs.does_intersect(neighbour.position, new_vertex.position)) {
                     neighbour.cost_from_start = cost;
                     graph.reparent(neighbour.id, new_vertex_id);
                 }

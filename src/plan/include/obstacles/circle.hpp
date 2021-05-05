@@ -12,10 +12,10 @@ struct Circle {
         }
     }
 
-    bool is_colliding(const Vec2& point) const { return (point - center).norm() <= radius; }
+    bool does_intersect(const Vec2& point) const { return (point - center).norm() <= radius; }
 
-    bool is_colliding(const Vec2& p1, const Vec2& p2) const {
-        if (is_colliding(p1) || is_colliding(p2)) {
+    bool does_intersect(const Vec2& p1, const Vec2& p2) const {
+        if (does_intersect(p1) || does_intersect(p2)) {
             return true;
         }
         Vec2 pb_pa = p2 - p1;

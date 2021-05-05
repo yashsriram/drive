@@ -31,9 +31,14 @@ public:
         }
     }
 
-    bool is_colliding(const Vec2& p1, const Vec2& p2) const {
+    bool does_intersect(const Vec2& p1, const Vec2& p2) const {
         for (const auto& circle : circles) {
-            if (circle.is_colliding(p1, p2)) {
+            if (circle.does_intersect(p1, p2)) {
+                return true;
+            }
+        }
+        for (const auto& line : lines) {
+            if (line.does_intersect(p1, p2)) {
                 return true;
             }
         }
@@ -83,6 +88,7 @@ public:
             m.action = visualization_msgs::Marker::ADD;
 
             m.type = visualization_msgs::Marker::LINE_STRIP;
+            m.pose.orientation.w = 1;
             geometry_msgs::Point p1;
             p1.x = line.p1.x;
             p1.y = line.p1.y;

@@ -27,10 +27,12 @@ int main(int argc, char** argv) {
     ros::Publisher rrt_viz = n.advertise<visualization_msgs::MarkerArray>("/plan/debug", 30);
     ros::Publisher cs_viz = n.advertise<visualization_msgs::MarkerArray>("/cs/debug", 1);
 
-    cs.add_circle(1.0, 1.0, 0.25, AGENT_RADIUS);
-    cs.add_circle(2.0, 2.0, 0.20, AGENT_RADIUS);
+    cs.add_circle(2.0, 2.0, 0.25, AGENT_RADIUS);
+    cs.add_circle(3.0, 3.0, 0.20, AGENT_RADIUS);
+    cs.add_circle(2.0, 4.0, 0.20, AGENT_RADIUS);
+    cs.add_circle(4.0, 2.0, 0.20, AGENT_RADIUS);
 
-    Route route({Vec2(0.0, 0.0), Vec2(4.0, 4.0)});
+    Route route({Vec2(0.0, 0.0), Vec2(5.0, 5.0)});
     cs.add_lines(route.points, 1.5, AGENT_RADIUS);
 
     ros::Rate loop_rate(30);
