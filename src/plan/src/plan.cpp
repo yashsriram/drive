@@ -6,6 +6,7 @@
 #include "cs.hpp"
 #include "obstacles/circle.hpp"
 #include "orrt.hpp"
+#include "route.hpp"
 #include "vec2.hpp"
 
 using namespace std;
@@ -28,6 +29,9 @@ int main(int argc, char** argv) {
 
     cs.add_circle(1.0, 1.0, 0.25, AGENT_RADIUS);
     cs.add_circle(2.0, 2.0, 0.20, AGENT_RADIUS);
+
+    Route route({Vec2(0.0, 0.0), Vec2(4.0, 4.0)});
+    cs.add_lines(route.points, 1.5, AGENT_RADIUS);
 
     ros::Rate loop_rate(30);
     while (ros::ok()) {

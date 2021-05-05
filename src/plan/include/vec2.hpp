@@ -6,7 +6,7 @@
 struct Vec2 {
     float x, y;
 
-    Vec2(float x, float y) : x(x), y(y) {}
+    Vec2(const float x, const float y) : x(x), y(y) {}
 
     Vec2(const Vec2 &c) = default;
 
@@ -16,9 +16,9 @@ struct Vec2 {
 
     Vec2 operator-(const Vec2 &rhs) const { return Vec2(x - rhs.x, y - rhs.y); }
 
-    Vec2 operator*(float t) const { return Vec2(x * t, y * t); }
+    Vec2 operator*(const float t) const { return Vec2(x * t, y * t); }
 
-    void operator*=(float t) {
+    void operator*=(const float t) {
         x *= t;
         y *= t;
     }
@@ -34,7 +34,7 @@ struct Vec2 {
         }
     }
 
-    float dot(Vec2 rhs) const { return x * rhs.x + y * rhs.y; }
+    float dot(const Vec2 &rhs) const { return x * rhs.x + y * rhs.y; }
 
     float norm() const { return sqrt(x * x + y * y); }
 

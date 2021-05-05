@@ -78,6 +78,7 @@ Visualization Manager:
       Name: MarkerArray
       Namespaces:
         circles: true
+        lines: true
       Queue Size: 5
       Value: true
   Enabled: true
@@ -108,7 +109,7 @@ Visualization Manager:
   Views:
     Current:
       Class: rviz/ThirdPersonFollower
-      Distance: 6.9103288650512695
+      Distance: 9.294593811035156
       Enable Stereo Rendering:
         Stereo Eye Separation: 0.05999999865889549
         Stereo Focal Distance: 1
@@ -116,17 +117,17 @@ Visualization Manager:
         Value: false
       Field of View: 0.7853981852531433
       Focal Point:
-        X: 1.6929950714111328
-        Y: 0.696428656578064
+        X: 0.9879426956176758
+        Y: 0.9760949611663818
         Z: 0
       Focal Shape Fixed Size: true
       Focal Shape Size: 0.05000000074505806
       Invert Z Axis: false
       Name: Current View
       Near Clip Distance: 0.009999999776482582
-      Pitch: 1.1047966480255127
+      Pitch: 0.7047975659370422
       Target Frame: gps
-      Yaw: 4.633589267730713
+      Yaw: 4.548593044281006
     Saved: ~
 Window Geometry:
   Displays:
