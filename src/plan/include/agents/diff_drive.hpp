@@ -61,6 +61,8 @@ struct DiffDrive {
     }
 
     void draw(const ros::Publisher& viz) {
+        visualization_msgs::MarkerArray arr;
+
         // Position
         visualization_msgs::Marker center_marker;
         center_marker.header.frame_id = "map";
@@ -79,7 +81,7 @@ struct DiffDrive {
         center_marker.color.g = 1.0;
         center_marker.color.b = 1.0;
         center_marker.color.a = 1.0;
-        viz.publish(center_marker);
+        arr.markers.push_back(center_marker);
 
         // Orientation
         visualization_msgs::Marker orientation_marker;
@@ -104,8 +106,7 @@ struct DiffDrive {
         p2.y = center.y + sin(orientation) * radius;
         p2.z = 0.15;
         orientation_marker.points.push_back(p2);
-
-        viz.publish(orientation_marker);
+        arr.markers.push_back(orientation_marker);
 
         // Next center
         if (current_milestone < path.size() - 1) {
@@ -125,8 +126,7 @@ struct DiffDrive {
             next_center_marker.scale.z = 0.01;
             next_center_marker.color.r = 1.0f;
             next_center_marker.color.a = 1.0;
-
-            viz.publish(next_center_marker);
+            arr.markers.push_back(next_center_marker);
         }
 
         // Path
@@ -150,7 +150,9 @@ struct DiffDrive {
             path_marker.points.push_back(p);
         }
 
-        viz.publish(path_marker);
+        arr.markers.push_back(path_marker);
+
+        viz.publish(arr);
     }
 };
 
