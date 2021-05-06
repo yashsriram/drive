@@ -32,8 +32,8 @@ int main(int argc, char** argv) {
     cs.add_circle(2.0, 4.0, 0.20, AGENT_RADIUS);
     cs.add_circle(4.0, 2.0, 0.20, AGENT_RADIUS);
 
-    Route route({Vec2(0.0, 0.0), Vec2(5.0, 5.0)});
-    cs.add_lines(route.points, 1.5, AGENT_RADIUS);
+    Route route({Vec2(0.0, 0.0), Vec2(0.0, 5.0), Vec2(5.0, 5.0), Vec2(5.0, 0.0)});
+    cs.add_lines(route, 1.5, AGENT_RADIUS);
 
     ros::Rate loop_rate(30);
     while (ros::ok()) {
