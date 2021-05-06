@@ -23,6 +23,11 @@ struct Vec2 {
         y *= t;
     }
 
+    void operator+=(const Vec2 &rhs) {
+        x += rhs.x;
+        y += rhs.y;
+    }
+
     Vec2 normalize() const {
         float abs = norm();
         if (abs < 1e-6f) {

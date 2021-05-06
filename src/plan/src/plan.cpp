@@ -3,6 +3,7 @@
 #include <nav_msgs/Path.h>
 #include <ros/ros.h>
 
+#include "agents/diff_drive.hpp"
 #include "cs.hpp"
 #include "obstacles/circle.hpp"
 #include "orrt.hpp"
@@ -12,7 +13,7 @@
 using namespace std;
 
 const float AGENT_RADIUS = 0.25;
-const Vec2 start(0, 0);
+const Vec2 start(0, 1);
 const Vec2 finish(5, 5);
 ConfigurationSpace cs;
 
@@ -26,6 +27,7 @@ int main(int argc, char** argv) {
     ros::NodeHandle n;
     ros::Publisher rrt_viz = n.advertise<visualization_msgs::MarkerArray>("/plan/debug", 30);
     ros::Publisher cs_viz = n.advertise<visualization_msgs::MarkerArray>("/cs/debug", 1);
+    ros::Publisher agent_viz = n.advertise<visualization_msgs::Marker>("/agent/debug", 1);
 
     cs.add_circle(2.0, 2.0, 0.25, AGENT_RADIUS);
     cs.add_circle(3.0, 3.0, 0.20, AGENT_RADIUS);
@@ -34,6 +36,8 @@ int main(int argc, char** argv) {
 
     Route route({Vec2(0.0, 0.0), Vec2(0.0, 5.0), Vec2(5.0, 5.0), Vec2(5.0, 0.0)});
     cs.add_lines(route, 1.5, AGENT_RADIUS);
+
+    DiffDrive agent(start, 0.5, AGENT_RADIUS, 5, 1);
 
     ros::Rate loop_rate(30);
     while (ros::ok()) {
@@ -44,9 +48,11 @@ int main(int argc, char** argv) {
             points.push_back(Vec2(dist(e2) * 5.0, dist(e2) * 5.0));
         }
         orrt.grow_tree(points, cs);
+        agent.update(0.01, cs);
         // Draw RRT*
         orrt.draw(rrt_viz);
         cs.draw(cs_viz);
+        agent.draw(agent_viz);
         // Sleep
         loop_rate.sleep();
     }
