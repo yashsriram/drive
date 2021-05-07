@@ -13,46 +13,46 @@
 using namespace std;
 
 const float AGENT_RADIUS = 0.25;
-const Vec2 start(0, 1);
+const float ROUTE_PADDING = AGENT_RADIUS * 3;
+const float SAMPLING_PADDING = ROUTE_PADDING * 2;
 const Vec2 finish(5, 5);
 ConfigurationSpace cs;
 
 int main(int argc, char** argv) {
-    std::random_device rd;
-    std::mt19937 e2(rd());
-    std::uniform_real_distribution<> dist(0, 1);
-
     ros::init(argc, argv, "plan_node");
 
     ros::NodeHandle n;
-    ros::Publisher rrt_viz = n.advertise<visualization_msgs::MarkerArray>("/plan/debug", 30);
-    ros::Publisher cs_viz = n.advertise<visualization_msgs::MarkerArray>("/cs/debug", 1);
-    ros::Publisher agent_viz = n.advertise<visualization_msgs::MarkerArray>("/agent/debug", 1);
+    ros::Publisher plan_viz = n.advertise<visualization_msgs::MarkerArray>("/plan/debug", 30);
+    ros::Publisher sense_viz = n.advertise<visualization_msgs::MarkerArray>("/sense/debug", 1);
+    ros::Publisher act_viz = n.advertise<visualization_msgs::MarkerArray>("/act/debug", 1);
+
+    // Input
+    Route route({Vec2(0.0, 0.0), Vec2(1.0, 5.0), Vec2(5.0, 5.0), Vec2(7.0, 5.0), Vec2(9.0, 0.0)});
+    DiffDrive agent(Vec2(0, 1), 0.5, AGENT_RADIUS, 5, 2);
 
     cs.add_circle(2.0, 2.0, 0.25, AGENT_RADIUS);
     cs.add_circle(3.0, 3.0, 0.20, AGENT_RADIUS);
     cs.add_circle(2.0, 4.0, 0.20, AGENT_RADIUS);
     cs.add_circle(4.0, 2.0, 0.20, AGENT_RADIUS);
 
-    Route route({Vec2(0.0, 0.0), Vec2(0.0, 5.0), Vec2(5.0, 5.0), Vec2(5.0, 0.0)});
-    cs.add_lines(route, AGENT_RADIUS * 3, AGENT_RADIUS);
-
-    DiffDrive agent(start, 0.5, AGENT_RADIUS, 5, 2);
+    cs.add_lines(route, ROUTE_PADDING, AGENT_RADIUS);
 
     ros::Rate loop_rate(30);
     while (ros::ok()) {
-        // Grow tree
-        ORRT orrt(agent.center, finish);
-        std::vector<Vec2> points;
-        for (int i = 0; i < 500; ++i) {
-            points.push_back(Vec2(dist(e2) * 5.0, dist(e2) * 5.0));
-        }
-        orrt.grow_tree(points, cs);
+        // Sense
+
+        // Plan
+        ORRT orrt(agent.center, finish, SAMPLING_PADDING);
+        orrt.grow_tree(500, cs);
+
+        // Act
         agent.update(0.01, cs);
-        // Draw RRT*
-        orrt.draw(rrt_viz);
-        cs.draw(cs_viz);
-        agent.draw(agent_viz);
+
+        // Draw
+        cs.draw(sense_viz);
+        orrt.draw(plan_viz);
+        agent.draw(act_viz);
+
         // Sleep
         loop_rate.sleep();
     }

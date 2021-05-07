@@ -35,10 +35,16 @@ struct ORRT {
 
     const Vec2 start_position;
     const Vec2 finish_position;
+    const float sampling_padding;
     bool is_finish_reached;
     Graph graph;
 
-    ORRT(const Vec2 &start_position, const Vec2 &finish_position) : start_position(start_position), finish_position(finish_position), graph(start_position, 0), is_finish_reached(false) {}
+    ORRT(const Vec2 &start_position, const Vec2 &finish_position, const float sampling_padding)
+        : start_position(start_position), finish_position(finish_position), graph(start_position, 0), is_finish_reached(false), sampling_padding(sampling_padding) {
+        if (sampling_padding == 0) {
+            throw std::runtime_error("Zero sampling padding.");
+        }
+    }
 
     void generate_next_node(Vec2 new_position, const ConfigurationSpace &cs) {
         // Nearest vertex search
@@ -110,16 +116,23 @@ struct ORRT {
         }
     }
 
-    void grow_tree(const std::vector<Vec2> &new_positions, const ConfigurationSpace &cs) {
+    void grow_tree(int num_nodes, const ConfigurationSpace &cs) {
         std::random_device rd;
         std::mt19937 e2(rd());
         std::uniform_real_distribution<> dist(0, 1);
-        for (const Vec2 &new_position : new_positions) {
+        const float len = (finish_position - start_position).norm();
+        const Vec2 unit = (finish_position - start_position).normalize();
+        for (int i = 0; i < num_nodes; ++i) {
             // Generate node at finish position with a small probability
             if (dist(e2) <= 0.01) {
                 generate_next_node(finish_position, cs);
+            } else {
+                float x = dist(e2) * len;
+                float y = dist(e2) * sampling_padding * 2 - sampling_padding;
+                Vec2 rotated_sample_position(x * unit.x - y * unit.y, x * unit.y + y * unit.x);
+                Vec2 rot_trans_sample_position = rotated_sample_position + start_position;
+                generate_next_node(rot_trans_sample_position, cs);
             }
-            generate_next_node(new_position, cs);
         }
     }
 
@@ -142,6 +155,87 @@ struct ORRT {
     }
 
     void draw(const ros::Publisher &viz) {
+        // Viz start and end
+        visualization_msgs::MarkerArray arr;
+
+        visualization_msgs::Marker s;
+        s.header.frame_id = "map";
+        s.ns = "ends";
+        s.id = 1;
+        s.header.stamp = ros::Time::now();
+        s.action = visualization_msgs::Marker::ADD;
+        s.type = visualization_msgs::Marker::CUBE;
+        s.scale.x = END_POINT_HINT_SIZE;
+        s.scale.y = END_POINT_HINT_SIZE;
+        s.scale.z = END_POINT_HINT_SIZE;
+        s.pose.position.x = start_position.x;
+        s.pose.position.y = start_position.y;
+        s.pose.position.z = 0;
+        s.pose.orientation.w = 1.0;
+        s.color.b = 1;
+        s.color.a = 1.0;
+        arr.markers.push_back(s);
+
+        visualization_msgs::Marker f;
+        f.header.frame_id = "map";
+        f.ns = "ends";
+        f.id = 2;
+        f.header.stamp = ros::Time::now();
+        f.action = visualization_msgs::Marker::ADD;
+        f.type = visualization_msgs::Marker::CUBE;
+        f.scale.x = END_POINT_HINT_SIZE;
+        f.scale.y = END_POINT_HINT_SIZE;
+        f.scale.z = END_POINT_HINT_SIZE;
+        f.pose.position.x = finish_position.x;
+        f.pose.position.y = finish_position.y;
+        f.pose.position.z = 0;
+        f.pose.orientation.w = 1.0;
+        f.color.g = 1;
+        f.color.a = 1.0;
+        arr.markers.push_back(f);
+
+        // Viz sampling region
+        visualization_msgs::Marker m;
+        m.header.frame_id = "map";
+        m.ns = "sampling_region";
+        m.id = 0;
+        m.header.stamp = ros::Time::now();
+        m.action = visualization_msgs::Marker::ADD;
+        m.type = visualization_msgs::Marker::LINE_STRIP;
+        m.pose.orientation.w = 1;
+        const Vec2 unit = (finish_position - start_position).normalize();
+        const Vec2 ccw_perpendicular(-unit.y, unit.x), cw_perpendicular(unit.y, -unit.x);
+        const Vec2 e1 = start_position + ccw_perpendicular * sampling_padding;
+        const Vec2 e2 = finish_position + ccw_perpendicular * sampling_padding;
+        const Vec2 e3 = finish_position + cw_perpendicular * sampling_padding;
+        const Vec2 e4 = start_position + cw_perpendicular * sampling_padding;
+        geometry_msgs::Point p1;
+        p1.x = e1.x;
+        p1.y = e1.y;
+        m.points.push_back(p1);
+        geometry_msgs::Point p2;
+        p2.x = e2.x;
+        p2.y = e2.y;
+        m.points.push_back(p2);
+        geometry_msgs::Point p3;
+        p3.x = e3.x;
+        p3.y = e3.y;
+        m.points.push_back(p3);
+        geometry_msgs::Point p4;
+        p4.x = e4.x;
+        p4.y = e4.y;
+        m.points.push_back(p4);
+        geometry_msgs::Point p5;
+        p5.x = e1.x;
+        p5.y = e1.y;
+        m.points.push_back(p5);
+        m.scale.x = 0.05;
+        m.color.r = 0;
+        m.color.g = 1;
+        m.color.b = 1;
+        m.color.a = 0.5;
+        arr.markers.push_back(m);
+
         // Viz tree
         if (DRAW_TREE) {
             std::stack<int> fringe;
@@ -196,44 +290,6 @@ struct ORRT {
             }
             viz.publish(arr);
         }
-        // Viz start and end
-        visualization_msgs::MarkerArray arr;
-
-        visualization_msgs::Marker s;
-        s.header.frame_id = "map";
-        s.ns = "ends";
-        s.id = 1;
-        s.header.stamp = ros::Time::now();
-        s.action = visualization_msgs::Marker::ADD;
-        s.type = visualization_msgs::Marker::CUBE;
-        s.scale.x = END_POINT_HINT_SIZE;
-        s.scale.y = END_POINT_HINT_SIZE;
-        s.scale.z = END_POINT_HINT_SIZE;
-        s.pose.position.x = start_position.x;
-        s.pose.position.y = start_position.y;
-        s.pose.position.z = 0;
-        s.pose.orientation.w = 1.0;
-        s.color.b = 1;
-        s.color.a = 1.0;
-        arr.markers.push_back(s);
-
-        visualization_msgs::Marker f;
-        f.header.frame_id = "map";
-        f.ns = "ends";
-        f.id = 2;
-        f.header.stamp = ros::Time::now();
-        f.action = visualization_msgs::Marker::ADD;
-        f.type = visualization_msgs::Marker::CUBE;
-        f.scale.x = END_POINT_HINT_SIZE;
-        f.scale.y = END_POINT_HINT_SIZE;
-        f.scale.z = END_POINT_HINT_SIZE;
-        f.pose.position.x = finish_position.x;
-        f.pose.position.y = finish_position.y;
-        f.pose.position.z = 0;
-        f.pose.orientation.w = 1.0;
-        f.color.g = 1;
-        f.color.a = 1.0;
-        arr.markers.push_back(f);
 
         viz.publish(arr);
     }

@@ -23,7 +23,7 @@ struct DiffDrive {
         : center(center), orientation(orientation), radius(radius), linear_speed(linear_speed), angular_speed(angular_speed) {
         path.push_back(center);
         path.push_back(Vec2(0, 7));
-        path.push_back(Vec2(4, 4));
+        path.push_back(Vec2(5, 5));
     }
 
     /* void set_path(std::vector<Vec2> new_path) { path = new_path; } */
