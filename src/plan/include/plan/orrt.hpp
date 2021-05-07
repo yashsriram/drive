@@ -5,8 +5,8 @@
 #include <unordered_map>
 #include <vector>
 
-#include "cs.hpp"
-#include "graph.hpp"
+#include "plan/graph.hpp"
+#include "sense/cs.hpp"
 #include "vec2.hpp"
 
 struct ORRT {

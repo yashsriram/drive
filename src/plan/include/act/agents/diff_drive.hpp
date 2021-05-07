@@ -2,7 +2,7 @@
 
 #include <visualization_msgs/MarkerArray.h>
 
-#include "cs.hpp"
+#include "sense/cs.hpp"
 #include "vec2.hpp"
 
 struct DiffDrive {

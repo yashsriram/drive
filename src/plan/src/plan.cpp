@@ -3,11 +3,11 @@
 #include <nav_msgs/Path.h>
 #include <ros/ros.h>
 
-#include "agents/diff_drive.hpp"
-#include "cs.hpp"
-#include "obstacles/circle.hpp"
-#include "orrt.hpp"
+#include "act/agents/diff_drive.hpp"
+#include "plan/orrt.hpp"
 #include "route.hpp"
+#include "sense/cs.hpp"
+#include "sense/obstacles/circle.hpp"
 #include "vec2.hpp"
 
 using namespace std;
@@ -35,14 +35,14 @@ int main(int argc, char** argv) {
     cs.add_circle(4.0, 2.0, 0.20, AGENT_RADIUS);
 
     Route route({Vec2(0.0, 0.0), Vec2(0.0, 5.0), Vec2(5.0, 5.0), Vec2(5.0, 0.0)});
-    cs.add_lines(route, 1.5, AGENT_RADIUS);
+    cs.add_lines(route, AGENT_RADIUS * 3, AGENT_RADIUS);
 
     DiffDrive agent(start, 0.5, AGENT_RADIUS, 5, 2);
 
     ros::Rate loop_rate(30);
     while (ros::ok()) {
         // Grow tree
-        ORRT orrt(start, finish);
+        ORRT orrt(agent.center, finish);
         std::vector<Vec2> points;
         for (int i = 0; i < 500; ++i) {
             points.push_back(Vec2(dist(e2) * 5.0, dist(e2) * 5.0));

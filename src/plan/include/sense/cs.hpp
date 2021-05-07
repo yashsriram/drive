@@ -5,9 +5,9 @@
 
 #include <eigen3/Eigen/Dense>
 
-#include "obstacles/circle.hpp"
-#include "obstacles/line.hpp"
 #include "route.hpp"
+#include "sense/obstacles/circle.hpp"
+#include "sense/obstacles/line.hpp"
 
 struct ConfigurationSpace {
 private:
