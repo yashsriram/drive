@@ -37,7 +37,7 @@ int main(int argc, char** argv) {
     Route route({Vec2(0.0, 0.0), Vec2(0.0, 5.0), Vec2(5.0, 5.0), Vec2(5.0, 0.0)});
     cs.add_lines(route, 1.5, AGENT_RADIUS);
 
-    DiffDrive agent(start, 0.5, AGENT_RADIUS, 5, 1);
+    DiffDrive agent(start, 0.5, AGENT_RADIUS, 5, 2);
 
     ros::Rate loop_rate(30);
     while (ros::ok()) {
