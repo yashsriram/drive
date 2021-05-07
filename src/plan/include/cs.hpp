@@ -12,7 +12,9 @@
 struct ConfigurationSpace {
 private:
     std::vector<Circle> circles;
+    std::vector<Circle> physical_circles;
     std::vector<Line> lines;
+    std::vector<Line> physical_lines;
 
     void add_lines(const std::vector<Line>& side_lines) {
         if (side_lines.size() == 0) {
@@ -56,7 +58,10 @@ private:
 public:
     ConfigurationSpace() {}
 
-    void add_circle(const float& x, const float& y, const float& radius, const float& agent_radius) { circles.push_back(Circle(Vec2(x, y), radius + agent_radius)); }
+    void add_circle(const float& x, const float& y, const float& radius, const float& agent_radius) {
+        physical_circles.push_back(Circle(Vec2(x, y), radius));
+        circles.push_back(Circle(Vec2(x, y), radius + agent_radius));
+    }
 
     // Does not handle near 180 turns, intersecting/looped routes
     void add_lines(const Route& route, const float& padding, const float& agent_radius) {
@@ -74,6 +79,7 @@ public:
             const Vec2 ccw_perpendicular(-unit.y, unit.x), cw_perpendicular(unit.y, -unit.x);
             left_lines.push_back(Line(p1 + ccw_perpendicular * cs_padding, p2 + ccw_perpendicular * cs_padding));
             right_lines.push_back(Line(p1 + cw_perpendicular * cs_padding, p2 + cw_perpendicular * cs_padding));
+            physical_lines.push_back(Line(p1, p2));
         }
         add_lines(left_lines);
         add_lines(right_lines);
@@ -123,6 +129,34 @@ public:
 
             arr.markers.push_back(m);
         }
+        // Draw physical circles
+        for (int i = 0; i < physical_circles.size(); ++i) {
+            const Circle& circle = physical_circles[i];
+            visualization_msgs::Marker m;
+
+            m.header.frame_id = "map";
+            m.ns = "physical_circles";
+            m.id = i;
+            m.header.stamp = ros::Time::now();
+
+            m.action = visualization_msgs::Marker::ADD;
+
+            m.type = visualization_msgs::Marker::CYLINDER;
+            m.pose.orientation.w = 1.0;
+            m.pose.position.x = circle.center.x;
+            m.pose.position.y = circle.center.y;
+
+            m.scale.x = circle.radius * 2;
+            m.scale.y = circle.radius * 2;
+            m.scale.z = 0.1;
+
+            m.color.r = 1;
+            m.color.g = 1;
+            m.color.b = 0;
+            m.color.a = 0.2;
+
+            arr.markers.push_back(m);
+        }
         // Draw lines
         for (int i = 0; i < lines.size(); ++i) {
             const Line& line = lines[i];
@@ -151,6 +185,38 @@ public:
             m.color.r = 1;
             m.color.g = 0;
             m.color.b = 1;
+            m.color.a = 0.2;
+
+            arr.markers.push_back(m);
+        }
+        // Draw physical lines
+        for (int i = 0; i < physical_lines.size(); ++i) {
+            const Line& line = physical_lines[i];
+            visualization_msgs::Marker m;
+
+            m.header.frame_id = "map";
+            m.ns = "physical_lines";
+            m.id = i;
+            m.header.stamp = ros::Time::now();
+
+            m.action = visualization_msgs::Marker::ADD;
+
+            m.type = visualization_msgs::Marker::LINE_STRIP;
+            m.pose.orientation.w = 1;
+            geometry_msgs::Point p1;
+            p1.x = line.p1.x;
+            p1.y = line.p1.y;
+            m.points.push_back(p1);
+            geometry_msgs::Point p2;
+            p2.x = line.p2.x;
+            p2.y = line.p2.y;
+            m.points.push_back(p2);
+
+            m.scale.x = 0.05;
+
+            m.color.r = 1;
+            m.color.g = 1;
+            m.color.b = 0;
             m.color.a = 0.2;
 
             arr.markers.push_back(m);
