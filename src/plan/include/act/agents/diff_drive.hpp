@@ -7,7 +7,7 @@
 
 struct DiffDrive {
     const float MILESTONE_SLACK = 0.04f;
-    const float ORIENTATION_SLACK = 0.01f;
+    const float ORIENTATION_SLACK = 0.05f;
 
     Vec2 center;
     float orientation;
@@ -22,13 +22,20 @@ struct DiffDrive {
     DiffDrive(const Vec2& center, const float orientation, const float radius, const float linear_speed, const float angular_speed)
         : center(center), orientation(orientation), radius(radius), linear_speed(linear_speed), angular_speed(angular_speed) {
         path.push_back(center);
-        path.push_back(Vec2(0, 7));
-        path.push_back(Vec2(5, 5));
     }
 
-    /* void set_path(std::vector<Vec2> new_path) { path = new_path; } */
+    void set_path(std::vector<Vec2> new_path) {
+        if (new_path.size() == 0) {
+            throw std::runtime_error("Zero sized path given to agent.");
+        }
+        if (!(new_path[0] == center)) {
+            throw std::runtime_error("First point in path is not agent's center.");
+        }
+        path = new_path;
+        current_milestone = 0;
+    }
 
-    void update(float dt, const ConfigurationSpace& cs) {
+    bool update(float dt, const ConfigurationSpace& cs) {
         if (current_milestone < path.size() - 1) {
             // Pull towards next milestone
             Vec2 to_goal = path[current_milestone + 1] - center;
@@ -40,12 +47,12 @@ struct DiffDrive {
             // Orient towards goal
             if (abs(to_orientation) > ORIENTATION_SLACK) {
                 orientation += (to_orientation > 0) ? angular_speed * dt : -angular_speed * dt;
-                return;
+                return current_milestone == path.size() - 1;
             }
             // Reached next milestone
             if (to_goal.norm() < MILESTONE_SLACK) {
                 current_milestone++;
-                return;
+                return current_milestone == path.size() - 1;
             }
             // Next next milestone lookup
             if (current_milestone < path.size() - 2) {
@@ -58,6 +65,7 @@ struct DiffDrive {
             // Move towards next milestone
             center += displacement;
         }
+        return current_milestone == path.size() - 1;
     }
 
     void draw(const ros::Publisher& viz) {
@@ -140,7 +148,9 @@ struct DiffDrive {
         path_marker.color.a = 1.0;
         path_marker.type = visualization_msgs::Marker::LINE_STRIP;
         path_marker.scale.x = 0.01;
-        path_marker.color.r = path_marker.color.g = path_marker.color.b = 1.0f;
+        path_marker.color.r = 0.0f;
+        path_marker.color.g = 1.0f;
+        path_marker.color.b = 0.0f;
 
         // Links
         for (const auto& milestone : path) {

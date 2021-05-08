@@ -13,9 +13,8 @@
 using namespace std;
 
 const float AGENT_RADIUS = 0.25;
-const float ROUTE_PADDING = AGENT_RADIUS * 3;
+const float ROUTE_PADDING = AGENT_RADIUS * 4;
 const float SAMPLING_PADDING = ROUTE_PADDING * 2;
-const Vec2 finish(5, 5);
 ConfigurationSpace cs;
 
 int main(int argc, char** argv) {
@@ -28,25 +27,32 @@ int main(int argc, char** argv) {
 
     // Input
     Route route({Vec2(0.0, 0.0), Vec2(1.0, 5.0), Vec2(5.0, 5.0), Vec2(7.0, 5.0), Vec2(9.0, 0.0)});
-    DiffDrive agent(Vec2(0, 1), 0.5, AGENT_RADIUS, 5, 2);
+    DiffDrive agent(route.start(), 0.5, AGENT_RADIUS, 5, 4);
 
-    cs.add_circle(2.0, 2.0, 0.25, AGENT_RADIUS);
-    cs.add_circle(3.0, 3.0, 0.20, AGENT_RADIUS);
-    cs.add_circle(2.0, 4.0, 0.20, AGENT_RADIUS);
-    cs.add_circle(4.0, 2.0, 0.20, AGENT_RADIUS);
+    cs.add_circle(1.0, 1.0, 0.15, AGENT_RADIUS);
+    cs.add_circle(3.0, 5.0, 0.12, AGENT_RADIUS);
+    cs.add_circle(5.0, 5.0, 0.12, AGENT_RADIUS);
+    cs.add_circle(9.0, 0.0, 0.12, AGENT_RADIUS);
 
     cs.add_lines(route, ROUTE_PADDING, AGENT_RADIUS);
 
     ros::Rate loop_rate(30);
     while (ros::ok()) {
+        if (route.is_done()) {
+            break;
+        }
         // Sense
 
         // Plan
-        ORRT orrt(agent.center, finish, SAMPLING_PADDING);
+        ORRT orrt(agent.center, route.current_goal(), SAMPLING_PADDING);
         orrt.grow_tree(500, cs);
+        agent.set_path(orrt.path_to_nearest_node_from_finish());
 
         // Act
-        agent.update(0.01, cs);
+        bool reached_finish = agent.update(0.01, cs);
+        if (reached_finish) {
+            route.increment_goal();
+        }
 
         // Draw
         cs.draw(sense_viz);

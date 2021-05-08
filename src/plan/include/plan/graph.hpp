@@ -65,4 +65,15 @@ struct Graph {
     Vertex &get_mut(const int id) { return vertices[id]; }
 
     int size() const { return vertices.size(); }
+
+    std::vector<Vec2> get_path_to(const int vertex_id) {
+        std::vector<Vec2> path;
+        int curr_id = vertex_id;
+        while (curr_id != vertex_id_generator::null_index) {
+            path.push_back(vertices[curr_id].position);
+            curr_id = vertices[curr_id].parent_id;
+        }
+        std::reverse(path.begin(), path.end());
+        return path;
+    }
 };

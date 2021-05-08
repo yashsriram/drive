@@ -10,24 +10,6 @@
 #include "vec2.hpp"
 
 struct ORRT {
-    /* int get_finish_vertex() { */
-    /*     std::stack<const Vertex *> fringe; */
-    /*     fringe.push(&root); */
-    /*     Vertex *finishVertex = NULL; */
-    /*     while (fringe.size() > 0) { */
-    /*         const Vertex *node = fringe.top(); */
-    /*         fringe.pop(); */
-    /*         if ((node->position - finish_position).norm() < 1e-6) { */
-    /*             finishVertex = (Vertex *)node; */
-    /*             break; */
-    /*         } */
-    /*         for (const Vertex &child : node->children) { */
-    /*             fringe.push(&child); */
-    /*         } */
-    /*     } */
-    /*     return finishVertex; */
-    /* } */
-
     constexpr static float GROWTH_LIMIT = 1;
     constexpr static float END_POINT_HINT_SIZE = 0.2;
     constexpr static float NEIGHBOUR_RADIUS = 1;
@@ -36,11 +18,17 @@ struct ORRT {
     const Vec2 start_position;
     const Vec2 finish_position;
     const float sampling_padding;
-    bool is_finish_reached;
     Graph graph;
+    int nearest_vertex_to_finish_id;
+    float nearest_vertex_to_finish_distance;
 
     ORRT(const Vec2 &start_position, const Vec2 &finish_position, const float sampling_padding)
-        : start_position(start_position), finish_position(finish_position), graph(start_position, 0), is_finish_reached(false), sampling_padding(sampling_padding) {
+        : start_position(start_position),
+          finish_position(finish_position),
+          graph(start_position, 0),
+          sampling_padding(sampling_padding),
+          nearest_vertex_to_finish_id(graph.root().id),
+          nearest_vertex_to_finish_distance((start_position - finish_position).norm()) {
         if (sampling_padding == 0) {
             throw std::runtime_error("Zero sampling padding.");
         }
@@ -111,8 +99,10 @@ struct ORRT {
                 }
             }
         }
-        if (new_position == finish_position) {
-            is_finish_reached = true;
+        float distance_to_finish = (new_vertex.position - finish_position).norm();
+        if (distance_to_finish < nearest_vertex_to_finish_distance) {
+            nearest_vertex_to_finish_id = new_vertex_id;
+            nearest_vertex_to_finish_distance = distance_to_finish;
         }
     }
 
@@ -135,6 +125,8 @@ struct ORRT {
             }
         }
     }
+
+    std::vector<Vec2> path_to_nearest_node_from_finish() { return graph.get_path_to(nearest_vertex_to_finish_id); }
 
     void print() {
         std::stack<int> fringe;
@@ -293,21 +285,5 @@ struct ORRT {
 
         viz.publish(arr);
     }
-
-    /*     public List<Vec2> search() { */
-    /*         Vertex finishVertex = get_finish_vertex(); */
-    /*         if (finishVertex != null) { */
-    /*             List<Vec2> path = new ArrayList<>(); */
-    /*             path.add(0, finishVertex.position); */
-    /*             Vertex node = finishVertex.parent; */
-    /*             while (node != null) { */
-    /*                 path.add(0, node.position); */
-    /*                 node = node.parent; */
-    /*             } */
-    /*             return path; */
-    /*         } */
-    /*         PApplet.println("Could not find path to finish position"); */
-    /*         return Collections.singletonList(start_position); */
-    /*     } */
 };
 
