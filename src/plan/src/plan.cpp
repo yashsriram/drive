@@ -13,8 +13,8 @@
 using namespace std;
 
 const float AGENT_RADIUS = 0.25;
-const float ROUTE_PADDING = AGENT_RADIUS * 4;
-const float SAMPLING_PADDING = ROUTE_PADDING * 2;
+const float ROUTE_PADDING = AGENT_RADIUS * 6;
+const float SAMPLING_PADDING = ROUTE_PADDING * 1.2;
 ConfigurationSpace cs;
 
 int main(int argc, char** argv) {
@@ -27,7 +27,7 @@ int main(int argc, char** argv) {
 
     // Input
     Route route({Vec2(0.0, 0.0), Vec2(1.0, 5.0), Vec2(5.0, 5.0), Vec2(7.0, 5.0), Vec2(9.0, 0.0)});
-    DiffDrive agent(route.start(), 0.5, AGENT_RADIUS, 5, 4);
+    DiffDrive agent(route.start(), 0.5, AGENT_RADIUS, 3, 3);
 
     cs.add_circle(1.0, 1.0, 0.15, AGENT_RADIUS);
     cs.add_circle(3.0, 5.0, 0.12, AGENT_RADIUS);
@@ -38,9 +38,11 @@ int main(int argc, char** argv) {
 
     ros::Rate loop_rate(30);
     while (ros::ok()) {
+        // Done?
         if (route.is_done()) {
             break;
         }
+
         // Sense
 
         // Plan
@@ -49,9 +51,12 @@ int main(int argc, char** argv) {
         agent.set_path(orrt.path_to_nearest_node_from_finish());
 
         // Act
-        bool reached_finish = agent.update(0.01, cs);
-        if (reached_finish) {
-            route.increment_goal();
+        for (int i = 0; i < 10; i++) {
+            bool reached_finish = agent.update(0.01, cs);
+            if (reached_finish) {
+                route.increment_goal();
+                break;
+            }
         }
 
         // Draw

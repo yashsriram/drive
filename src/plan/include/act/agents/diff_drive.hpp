@@ -6,7 +6,7 @@
 #include "vec2.hpp"
 
 struct DiffDrive {
-    const float MILESTONE_SLACK = 0.04f;
+    const float MILESTONE_SLACK = 0.1f;
     const float ORIENTATION_SLACK = 0.05f;
 
     Vec2 center;

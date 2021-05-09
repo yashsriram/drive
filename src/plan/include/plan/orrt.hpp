@@ -10,9 +10,9 @@
 #include "vec2.hpp"
 
 struct ORRT {
-    constexpr static float GROWTH_LIMIT = 1;
+    constexpr static float GROWTH_LIMIT = 0.5;
     constexpr static float END_POINT_HINT_SIZE = 0.2;
-    constexpr static float NEIGHBOUR_RADIUS = 1;
+    constexpr static float NEIGHBOUR_RADIUS = 0.5;
     constexpr static bool DRAW_TREE = true;
 
     const Vec2 start_position;
