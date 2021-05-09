@@ -6,13 +6,13 @@
 #include <eigen3/Eigen/Dense>
 
 #include "route.hpp"
-#include "sense/obstacles/circle.hpp"
 #include "sense/obstacles/line.hpp"
+#include "sense/obstacles/rectangle.hpp"
 
 struct ConfigurationSpace {
 private:
-    std::vector<Circle> circles;
-    std::vector<Circle> physical_circles;
+    std::vector<Rectangle> rectangles;
+    std::vector<Rectangle> physical_rectangles;
     std::vector<Line> lines;
     std::vector<Line> physical_lines;
 
@@ -58,14 +58,14 @@ private:
 public:
     ConfigurationSpace() {}
 
-    void clear_circles() {
-        circles.clear();
-        physical_circles.clear();
+    void clear_rectangles() {
+        rectangles.clear();
+        physical_rectangles.clear();
     }
 
-    void add_circle(const float& x, const float& y, const float& radius, const float& agent_radius) {
-        physical_circles.push_back(Circle(Vec2(x, y), radius));
-        circles.push_back(Circle(Vec2(x, y), radius + agent_radius));
+    void add_rectangle(const float& x, const float& y, const float& orientation, const float& width, const float& height, const float& agent_radius) {
+        physical_rectangles.push_back(Rectangle(Vec2(x, y), orientation, width, height));
+        rectangles.push_back(Rectangle(Vec2(x, y), orientation, width + agent_radius * 2, height + agent_radius * 2));
     }
 
     // Does not handle near 180 turns, intersecting/looped routes
@@ -91,8 +91,8 @@ public:
     }
 
     bool does_intersect(const Vec2& p1, const Vec2& p2) const {
-        for (const auto& circle : circles) {
-            if (circle.does_intersect(p1, p2)) {
+        for (const auto& rectangle : rectangles) {
+            if (rectangle.does_intersect(p1, p2)) {
                 return true;
             }
         }
@@ -105,27 +105,43 @@ public:
     }
 
     void draw(const ros::Publisher& viz) const {
-        // Draw circles
+        // Draw rectangles
         visualization_msgs::MarkerArray arr;
-        for (int i = 0; i < circles.size(); ++i) {
-            const Circle& circle = circles[i];
+        for (int i = 0; i < rectangles.size(); ++i) {
+            const Rectangle& rectangle = rectangles[i];
             visualization_msgs::Marker m;
 
             m.header.frame_id = "map";
-            m.ns = "circles";
+            m.ns = "rectangles";
             m.id = i;
             m.header.stamp = ros::Time::now();
 
             m.action = visualization_msgs::Marker::ADD;
 
-            m.type = visualization_msgs::Marker::CYLINDER;
-            m.pose.orientation.w = 1.0;
-            m.pose.position.x = circle.center.x;
-            m.pose.position.y = circle.center.y;
+            m.type = visualization_msgs::Marker::LINE_STRIP;
+            m.pose.orientation.w = 1;
+            geometry_msgs::Point p1;
+            p1.x = rectangle.l1.p1.x;
+            p1.y = rectangle.l1.p1.y;
+            m.points.push_back(p1);
+            geometry_msgs::Point p2;
+            p2.x = rectangle.l2.p1.x;
+            p2.y = rectangle.l2.p1.y;
+            m.points.push_back(p2);
+            geometry_msgs::Point p3;
+            p3.x = rectangle.l3.p1.x;
+            p3.y = rectangle.l3.p1.y;
+            m.points.push_back(p3);
+            geometry_msgs::Point p4;
+            p4.x = rectangle.l4.p1.x;
+            p4.y = rectangle.l4.p1.y;
+            m.points.push_back(p4);
+            geometry_msgs::Point p5;
+            p5.x = rectangle.l1.p1.x;
+            p5.y = rectangle.l1.p1.y;
+            m.points.push_back(p5);
 
-            m.scale.x = circle.radius * 2;
-            m.scale.y = circle.radius * 2;
-            m.scale.z = 0.1;
+            m.scale.x = 0.05;
 
             m.color.r = 1;
             m.color.g = 0;
@@ -134,30 +150,46 @@ public:
 
             arr.markers.push_back(m);
         }
-        // Draw physical circles
-        for (int i = 0; i < physical_circles.size(); ++i) {
-            const Circle& circle = physical_circles[i];
+        // Draw physical rectangles
+        for (int i = 0; i < physical_rectangles.size(); ++i) {
+            const Rectangle& rectangle = physical_rectangles[i];
             visualization_msgs::Marker m;
 
             m.header.frame_id = "map";
-            m.ns = "physical_circles";
+            m.ns = "physical_rectangles";
             m.id = i;
             m.header.stamp = ros::Time::now();
 
             m.action = visualization_msgs::Marker::ADD;
 
-            m.type = visualization_msgs::Marker::CYLINDER;
-            m.pose.orientation.w = 1.0;
-            m.pose.position.x = circle.center.x;
-            m.pose.position.y = circle.center.y;
+            m.type = visualization_msgs::Marker::LINE_STRIP;
+            m.pose.orientation.w = 1;
+            geometry_msgs::Point p1;
+            p1.x = rectangle.l1.p1.x;
+            p1.y = rectangle.l1.p1.y;
+            m.points.push_back(p1);
+            geometry_msgs::Point p2;
+            p2.x = rectangle.l2.p1.x;
+            p2.y = rectangle.l2.p1.y;
+            m.points.push_back(p2);
+            geometry_msgs::Point p3;
+            p3.x = rectangle.l3.p1.x;
+            p3.y = rectangle.l3.p1.y;
+            m.points.push_back(p3);
+            geometry_msgs::Point p4;
+            p4.x = rectangle.l4.p1.x;
+            p4.y = rectangle.l4.p1.y;
+            m.points.push_back(p4);
+            geometry_msgs::Point p5;
+            p5.x = rectangle.l1.p1.x;
+            p5.y = rectangle.l1.p1.y;
+            m.points.push_back(p5);
 
-            m.scale.x = circle.radius * 2;
-            m.scale.y = circle.radius * 2;
-            m.scale.z = 0.1;
+            m.scale.x = 0.05;
 
             m.color.r = 1;
-            m.color.g = 1;
-            m.color.b = 0;
+            m.color.g = 0;
+            m.color.b = 1;
             m.color.a = 0.5;
 
             arr.markers.push_back(m);

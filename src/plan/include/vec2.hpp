@@ -39,6 +39,8 @@ struct Vec2 {
         }
     }
 
+    Vec2 rotate(const float angle) const { return Vec2(x * cos(angle) - y * sin(angle), x * sin(angle) + y * cos(angle)); }
+
     float dot(const Vec2 &rhs) const { return x * rhs.x + y * rhs.y; }
 
     float norm() const { return sqrt(x * x + y * y); }

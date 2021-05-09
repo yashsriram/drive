@@ -7,31 +7,31 @@
 #include "plan/orrt.hpp"
 #include "route.hpp"
 #include "sense/cs.hpp"
-#include "sense/obstacles/circle.hpp"
+#include "sense/obstacles/rectangle.hpp"
 #include "vec2.hpp"
 
 struct ObstaclesPublisher {
-    std::vector<Circle> circles;
+    std::vector<Rectangle> rectangles;
 
     ObstaclesPublisher() {
-        circles.push_back(Circle(Vec2(0.0, 3.0), 0.1));
-        circles.push_back(Circle(Vec2(3.0, 5.0), 0.1));
-        circles.push_back(Circle(Vec2(8.0, 1.0), 0.1));
-        circles.push_back(Circle(Vec2(11.0, 2.0), 0.1));
-        circles.push_back(Circle(Vec2(11.0, 5.0), 0.1));
-        circles.push_back(Circle(Vec2(11.0, 4.0), 0.1));
-        circles.push_back(Circle(Vec2(11.0, 3.0), 0.1));
-        circles.push_back(Circle(Vec2(8.0, 2.0), 0.1));
-        circles.push_back(Circle(Vec2(8.0, 5.0), 0.1));
-        circles.push_back(Circle(Vec2(8.0, 4.0), 0.1));
-        circles.push_back(Circle(Vec2(8.0, 3.0), 0.1));
+        rectangles.push_back(Rectangle(Vec2(0.0, 3.0), 0.2, 0.4, 0.2));
+        rectangles.push_back(Rectangle(Vec2(3.0, 5.0), 0.4, 0.4, 0.2));
+        rectangles.push_back(Rectangle(Vec2(8.0, 1.0), 0.2, 0.4, 0.2));
+        rectangles.push_back(Rectangle(Vec2(11.0, 2.0), 0.3, 0.4, 0.2));
+        rectangles.push_back(Rectangle(Vec2(11.0, 5.0), 0.8, 0.4, 0.2));
+        rectangles.push_back(Rectangle(Vec2(11.0, 4.0), 0.2, 0.4, 0.2));
+        rectangles.push_back(Rectangle(Vec2(11.0, 3.0), 0.1, 0.4, 0.2));
+        rectangles.push_back(Rectangle(Vec2(8.0, 2.0), 0.2, 0.4, 0.2));
+        rectangles.push_back(Rectangle(Vec2(8.0, 5.0), 0.7, 0.4, 0.2));
+        rectangles.push_back(Rectangle(Vec2(8.0, 4.0), 0.7, 0.4, 0.2));
+        rectangles.push_back(Rectangle(Vec2(8.0, 3.0), 0.8, 0.4, 0.2));
     }
 
-    std::vector<Circle> get_obstacles(const Vec2& position, const float range) const {
-        std::vector<Circle> ans;
-        for (const Circle& circle : circles) {
-            if ((circle.center - position).norm() < range) {
-                ans.push_back(circle);
+    std::vector<Rectangle> get_obstacles(const Vec2& position, const float range) const {
+        std::vector<Rectangle> ans;
+        for (const Rectangle& rectangle : rectangles) {
+            if ((rectangle.center - position).norm() < range) {
+                ans.push_back(rectangle);
             }
         }
         return ans;
@@ -67,9 +67,9 @@ int main(int argc, char** argv) {
         }
 
         // Sense
-        cs.clear_circles();
-        for (const Circle& sensed_circle : obs_pub.get_obstacles(agent.center, SENSING_RANGE)) {
-            cs.add_circle(sensed_circle.center.x, sensed_circle.center.y, sensed_circle.radius, AGENT_RADIUS);
+        cs.clear_rectangles();
+        for (const Rectangle& sensed_rectangle : obs_pub.get_obstacles(agent.center, SENSING_RANGE)) {
+            cs.add_rectangle(sensed_rectangle.center.x, sensed_rectangle.center.y, sensed_rectangle.orientation, sensed_rectangle.width, sensed_rectangle.height, AGENT_RADIUS);
         }
 
         // Plan
