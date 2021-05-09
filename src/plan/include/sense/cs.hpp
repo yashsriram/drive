@@ -58,6 +58,11 @@ private:
 public:
     ConfigurationSpace() {}
 
+    void clear_circles() {
+        circles.clear();
+        physical_circles.clear();
+    }
+
     void add_circle(const float& x, const float& y, const float& radius, const float& agent_radius) {
         physical_circles.push_back(Circle(Vec2(x, y), radius));
         circles.push_back(Circle(Vec2(x, y), radius + agent_radius));
@@ -125,7 +130,7 @@ public:
             m.color.r = 1;
             m.color.g = 0;
             m.color.b = 1;
-            m.color.a = 0.2;
+            m.color.a = 0.5;
 
             arr.markers.push_back(m);
         }
@@ -153,7 +158,7 @@ public:
             m.color.r = 1;
             m.color.g = 1;
             m.color.b = 0;
-            m.color.a = 0.2;
+            m.color.a = 0.5;
 
             arr.markers.push_back(m);
         }
@@ -185,7 +190,7 @@ public:
             m.color.r = 1;
             m.color.g = 0;
             m.color.b = 1;
-            m.color.a = 0.2;
+            m.color.a = 0.5;
 
             arr.markers.push_back(m);
         }
@@ -217,7 +222,7 @@ public:
             m.color.r = 1;
             m.color.g = 1;
             m.color.b = 0;
-            m.color.a = 0.2;
+            m.color.a = 0.5;
 
             arr.markers.push_back(m);
         }
