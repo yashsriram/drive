@@ -4,7 +4,7 @@
 #include <ros/ros.h>
 
 #include "act/agents/diff_drive.hpp"
-#include "plan/orrt.hpp"
+#include "plan/orrt/orrt.hpp"
 #include "route.hpp"
 #include "sense/cs.hpp"
 #include "sense/obstacles/rectangle.hpp"

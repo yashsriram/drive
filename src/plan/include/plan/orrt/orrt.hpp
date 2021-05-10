@@ -5,7 +5,7 @@
 #include <unordered_map>
 #include <vector>
 
-#include "plan/graph.hpp"
+#include "plan/orrt/graph.hpp"
 #include "sense/cs.hpp"
 #include "vec2.hpp"
 
