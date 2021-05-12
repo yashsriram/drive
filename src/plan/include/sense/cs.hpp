@@ -251,7 +251,7 @@ public:
             p2.y = line.p2.y;
             m.points.push_back(p2);
 
-            m.scale.x = 0.05;
+            m.scale.x = 0.01;
 
             m.color.r = 1;
             m.color.g = 1;

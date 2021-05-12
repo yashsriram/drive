@@ -92,7 +92,7 @@ int main(int argc, char** argv) {
         cumulative_duration += (std::clock() - start) / (double)CLOCKS_PER_SEC;
 
         // Act
-        for (int i = 0; i < 10; i++) {
+        for (int i = 0; i < 5; i++) {
             bool reached_finish = agent.update(0.01, cs);
             if (reached_finish) {
                 route.increment_goal();

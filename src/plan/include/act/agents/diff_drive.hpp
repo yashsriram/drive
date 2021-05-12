@@ -102,9 +102,9 @@ struct DiffDrive {
         orientation_marker.pose.orientation.w = 1.0;
         orientation_marker.color.a = 1.0;
         orientation_marker.type = visualization_msgs::Marker::LINE_LIST;
-        orientation_marker.scale.x = 0.01;
-        orientation_marker.color.g = 1.0f;
-        orientation_marker.color.b = 1.0f;
+        orientation_marker.scale.x = 0.1;
+        orientation_marker.color.g = 0.0f;
+        orientation_marker.color.b = 0.0f;
         geometry_msgs::Point p1;
         p1.x = center.x;
         p1.y = center.y;
@@ -168,7 +168,7 @@ struct DiffDrive {
         path_marker.pose.orientation.w = 1.0;
         path_marker.color.a = 1.0;
         path_marker.type = visualization_msgs::Marker::LINE_STRIP;
-        path_marker.scale.x = 0.01;
+        path_marker.scale.x = 0.03;
         path_marker.color.r = 0.0f;
         path_marker.color.g = 1.0f;
         path_marker.color.b = 0.0f;
