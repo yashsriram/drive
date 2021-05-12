@@ -58,6 +58,8 @@ private:
 public:
     ConfigurationSpace() {}
 
+    const std::vector<Rectangle>& get_rectangles() const { return rectangles; }
+
     void clear_rectangles() {
         rectangles.clear();
         physical_rectangles.clear();

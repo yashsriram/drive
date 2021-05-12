@@ -71,7 +71,8 @@ Visualization Manager:
       Marker Topic: /plan/debug
       Name: MarkerArray
       Namespaces:
-        {}
+        edges: true
+        vertices: true
       Queue Size: 15
       Value: true
     - Class: rviz/MarkerArray
@@ -79,16 +80,17 @@ Visualization Manager:
       Marker Topic: /sense/debug
       Name: MarkerArray
       Namespaces:
-        {}
-      Queue Size: 5
+        lines: true
+        physical_lines: false
+      Queue Size: 20
       Value: true
     - Class: rviz/MarkerArray
       Enabled: true
       Marker Topic: /act/debug
       Name: MarkerArray
       Namespaces:
-        {}
-      Queue Size: 5
+        diff_drive: true
+      Queue Size: 20
       Value: true
   Enabled: true
   Global Options:
@@ -118,7 +120,7 @@ Visualization Manager:
   Views:
     Current:
       Class: rviz/ThirdPersonFollower
-      Distance: 8.492314338684082
+      Distance: 14.68402099609375
       Enable Stereo Rendering:
         Stereo Eye Separation: 0.05999999865889549
         Stereo Focal Distance: 1
@@ -126,17 +128,17 @@ Visualization Manager:
         Value: false
       Field of View: 0.7853981852531433
       Focal Point:
-        X: 0.9913620948791504
-        Y: 0.99317467212677
-        Z: 2.86102294921875e-06
+        X: 1.97943115234375
+        Y: 1.9938902854919434
+        Z: -2.86102294921875e-06
       Focal Shape Fixed Size: true
       Focal Shape Size: 0.05000000074505806
       Invert Z Axis: false
       Name: Current View
       Near Clip Distance: 0.009999999776482582
-      Pitch: 0.8497970104217529
+      Pitch: 1.114796757698059
       Target Frame: gps
-      Yaw: 4.821783065795898
+      Yaw: 4.9617838859558105
     Saved: ~
 Window Geometry:
   Displays:

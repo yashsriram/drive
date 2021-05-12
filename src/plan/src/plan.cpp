@@ -5,6 +5,7 @@
 
 #include "act/agents/diff_drive.hpp"
 #include "plan/orrt/orrt.hpp"
+#include "plan/visibility/graph.hpp"
 #include "route.hpp"
 #include "sense/cs.hpp"
 #include "sense/obstacles/rectangle.hpp"
@@ -41,7 +42,7 @@ struct ObstaclesPublisher {
 const float AGENT_RADIUS = 0.25;
 const float ROUTE_PADDING = AGENT_RADIUS * 6;
 const float SAMPLING_PADDING = ROUTE_PADDING * 1.2;
-const float SENSING_RANGE = 2.0;
+const float SENSING_RANGE = 1.5;
 ConfigurationSpace cs;
 
 int main(int argc, char** argv) {
@@ -54,7 +55,7 @@ int main(int argc, char** argv) {
 
     // Input
     Route route({Vec2(0.0, 0.0), Vec2(0.0, 5.0), Vec2(5.0, 5.0), Vec2(7.0, 5.0), Vec2(9.0, 0.0), Vec2(12.0, 5.0), Vec2(12.0, 8.0), Vec2(18.0, 8.0)});
-    DiffDrive agent(route.start(), 0.5, AGENT_RADIUS, 3, 3);
+    DiffDrive agent(route.start(), 0.5, AGENT_RADIUS, 3, 3, SENSING_RANGE);
 
     ObstaclesPublisher obs_pub;
     cs.add_lines(route, ROUTE_PADDING, AGENT_RADIUS);
@@ -73,9 +74,12 @@ int main(int argc, char** argv) {
         }
 
         // Plan
-        ORRT orrt(agent.center, route.current_goal(), SAMPLING_PADDING);
-        orrt.grow_tree(500, cs);
-        agent.set_path(orrt.path_to_nearest_node_from_finish());
+        Visibility vis_graph(agent.center, route.current_goal(), cs);
+        agent.set_path(vis_graph.bfs(cs));
+
+        /* ORRT orrt(agent.center, route.current_goal(), SAMPLING_PADDING); */
+        /* orrt.grow_tree(500, cs); */
+        /* agent.set_path(orrt.path_to_nearest_node_from_finish()); */
 
         // Act
         for (int i = 0; i < 10; i++) {
@@ -88,7 +92,8 @@ int main(int argc, char** argv) {
 
         // Draw
         cs.draw(sense_viz);
-        orrt.draw(plan_viz);
+        /* orrt.draw(plan_viz); */
+        vis_graph.draw(plan_viz);
         agent.draw(act_viz);
 
         // Sleep

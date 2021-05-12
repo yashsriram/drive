@@ -6,21 +6,22 @@
 #include "vec2.hpp"
 
 struct DiffDrive {
-    const float MILESTONE_SLACK = 0.1f;
+    const float MILESTONE_SLACK = 0.05f;
     const float ORIENTATION_SLACK = 0.05f;
 
     Vec2 center;
     float orientation;
-    float radius;
+    const float radius;
 
-    float linear_speed;
-    float angular_speed;
+    const float linear_speed;
+    const float angular_speed;
+    const float sensing_range;
 
     std::vector<Vec2> path;
     int current_milestone = 0;
 
-    DiffDrive(const Vec2& center, const float orientation, const float radius, const float linear_speed, const float angular_speed)
-        : center(center), orientation(orientation), radius(radius), linear_speed(linear_speed), angular_speed(angular_speed) {
+    DiffDrive(const Vec2& center, const float orientation, const float radius, const float linear_speed, const float angular_speed, const float sensing_range)
+        : center(center), orientation(orientation), radius(radius), linear_speed(linear_speed), angular_speed(angular_speed), sensing_range(sensing_range) {
         path.push_back(center);
     }
 
@@ -115,6 +116,26 @@ struct DiffDrive {
         p2.z = 0.15;
         orientation_marker.points.push_back(p2);
         arr.markers.push_back(orientation_marker);
+
+        // Sensing range
+        visualization_msgs::Marker sensing_marker;
+        sensing_marker.header.frame_id = "map";
+        sensing_marker.ns = "diff_drive_sensing_range";
+        sensing_marker.header.stamp = ros::Time::now();
+        sensing_marker.id = 0;
+        sensing_marker.type = visualization_msgs::Marker::CYLINDER;
+        sensing_marker.action = visualization_msgs::Marker::ADD;
+        sensing_marker.pose.position.x = center.x;
+        sensing_marker.pose.position.y = center.y;
+        sensing_marker.pose.orientation.w = 1.0;
+        sensing_marker.scale.x = 2 * sensing_range;
+        sensing_marker.scale.y = 2 * sensing_range;
+        sensing_marker.scale.z = 0.1;
+        sensing_marker.color.r = 0.0;
+        sensing_marker.color.g = 1.0;
+        sensing_marker.color.b = 0.0;
+        sensing_marker.color.a = 0.05;
+        arr.markers.push_back(sensing_marker);
 
         // Next center
         if (current_milestone < path.size() - 1) {
