@@ -65,7 +65,8 @@ int main(int argc, char** argv) {
 
     ros::Rate loop_rate(30);
     std::clock_t start;
-    double duration;
+    double cumulative_duration;
+    int loop_iter = 0;
     while (ros::ok()) {
         // Done?
         if (route.is_done()) {
@@ -88,8 +89,7 @@ int main(int argc, char** argv) {
         orrt.grow_tree(250, cs);
         agent.set_path(orrt.path_to_nearest_node_from_finish());
 
-        duration = (std::clock() - start) / (double)CLOCKS_PER_SEC;
-        std::cout << "duration: " << duration << '\n';
+        cumulative_duration += (std::clock() - start) / (double)CLOCKS_PER_SEC;
 
         // Act
         for (int i = 0; i < 10; i++) {
@@ -108,7 +108,9 @@ int main(int argc, char** argv) {
 
         // Sleep
         loop_rate.sleep();
+        loop_iter++;
     }
+    std::cout << "average duration: " << cumulative_duration / loop_iter << std::endl;
 
     return 0;
 }
