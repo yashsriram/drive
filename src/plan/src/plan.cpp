@@ -3,6 +3,9 @@
 #include <nav_msgs/Path.h>
 #include <ros/ros.h>
 
+#include <cstdio>
+#include <ctime>
+
 #include "act/agents/diff_drive.hpp"
 #include "plan/orrt/orrt.hpp"
 #include "plan/visibility/graph.hpp"
@@ -61,6 +64,8 @@ int main(int argc, char** argv) {
     cs.add_lines(route, ROUTE_PADDING, AGENT_RADIUS);
 
     ros::Rate loop_rate(30);
+    std::clock_t start;
+    double duration;
     while (ros::ok()) {
         // Done?
         if (route.is_done()) {
@@ -74,12 +79,17 @@ int main(int argc, char** argv) {
         }
 
         // Plan
-        Visibility vis_graph(agent.center, route.current_goal(), cs);
-        agent.set_path(vis_graph.bfs(cs));
+        start = std::clock();
 
-        /* ORRT orrt(agent.center, route.current_goal(), SAMPLING_PADDING); */
-        /* orrt.grow_tree(500, cs); */
-        /* agent.set_path(orrt.path_to_nearest_node_from_finish()); */
+        /* Visibility vis_graph(agent.center, route.current_goal(), cs); */
+        /* agent.set_path(vis_graph.bfs(cs)); */
+
+        ORRT orrt(agent.center, route.current_goal(), SAMPLING_PADDING);
+        orrt.grow_tree(250, cs);
+        agent.set_path(orrt.path_to_nearest_node_from_finish());
+
+        duration = (std::clock() - start) / (double)CLOCKS_PER_SEC;
+        std::cout << "duration: " << duration << '\n';
 
         // Act
         for (int i = 0; i < 10; i++) {
@@ -92,8 +102,8 @@ int main(int argc, char** argv) {
 
         // Draw
         cs.draw(sense_viz);
-        /* orrt.draw(plan_viz); */
-        vis_graph.draw(plan_viz);
+        orrt.draw(plan_viz);
+        /* vis_graph.draw(plan_viz); */
         agent.draw(act_viz);
 
         // Sleep
