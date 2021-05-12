@@ -72,6 +72,8 @@ public:
         // Add start to fringe
         const int start_id = 0;
         const int finish_id = 1;
+        int nearest_to_finish_vertex_id = start_id;
+        float nearest_to_finish_distance = (vertices[start_id].position - vertices[finish_id].position).norm();
         add_to_fringe(fringe, vertices[start_id], vertices[start_id]);
         while (fringe.size() > 0) {
             // Pop one vertex
@@ -80,14 +82,10 @@ public:
             fringe.pop();
             num_vertices_explored++;
             // Check if finish
-            if (current_id == finish_id) {
-                /* std::cout << "Reached finish, # vertices explored: " << num_vertices_explored << std::endl; */
-                /* std::cout << "path size: " << current.path_from_start.size() << std::endl; */
-                std::vector<Vec2> path;
-                for (int id : current.path_from_start) {
-                    path.push_back(vertices[id].position);
-                }
-                return path;
+            float distance_to_finish = (current.position - vertices[finish_id].position).norm();
+            if (distance_to_finish < nearest_to_finish_distance) {
+                nearest_to_finish_distance = distance_to_finish;
+                nearest_to_finish_vertex_id = current_id;
             }
             // Mark this vertex as explored
             current.color = Eigen::Vector3f(1, 0, 0);
@@ -100,7 +98,11 @@ public:
             }
         }
 
-        throw std::runtime_error("Could not find finish.");
+        std::vector<Vec2> path;
+        for (int id : vertices[nearest_to_finish_vertex_id].path_from_start) {
+            path.push_back(vertices[id].position);
+        }
+        return path;
     }
 
     void draw(const ros::Publisher& viz) {
