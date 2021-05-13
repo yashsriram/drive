@@ -1,6 +1,7 @@
 # drive
 ## description
 - Real-time algorithms for following a given path while avoiding initially unknown static obstacles.
+- Uses RRT\* and Visibility graph along with padding obstacles.
 ## roadmap
 - Problems solved until now are documented in `report.pdf`
 ## code
