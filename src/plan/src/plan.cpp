@@ -65,7 +65,7 @@ int main(int argc, char** argv) {
 
     ros::Rate loop_rate(30);
     std::clock_t start;
-    double cumulative_duration;
+    double cumulative_duration = 0;
     int loop_iter = 0;
     while (ros::ok()) {
         // Done?
