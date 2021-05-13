@@ -90,7 +90,7 @@ public:
             // Mark this vertex as explored
             current.color = Eigen::Vector3f(1, 0, 0);
             // Update fringe
-            for (int neighbourId : current.neighbourIds) {
+            for (int neighbourId : current.neighbour_ids) {
                 VisibilityVertex& neighbour = vertices[neighbourId];
                 if (!neighbour.is_explored) {
                     add_to_fringe(fringe, current, neighbour);
@@ -149,7 +149,7 @@ public:
 
         // Edges
         for (const auto& vertex : vertices) {
-            for (auto neighbourId : vertex.neighbourIds) {
+            for (auto neighbourId : vertex.neighbour_ids) {
                 geometry_msgs::Point p1;
                 p1.x = vertex.position.x;
                 p1.y = vertex.position.y;

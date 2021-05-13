@@ -82,12 +82,12 @@ int main(int argc, char** argv) {
         // Plan
         start = std::clock();
 
-        /* Visibility vis_graph(agent.center, route.current_goal(), cs); */
-        /* agent.set_path(vis_graph.bfs(cs)); */
+        Visibility vis_graph(agent.center, route.current_goal(), cs);
+        agent.set_path(vis_graph.bfs(cs));
 
-        ORRT orrt(agent.center, route.current_goal(), SAMPLING_PADDING);
-        orrt.grow_tree(250, cs);
-        agent.set_path(orrt.path_to_nearest_node_from_finish());
+        /* ORRT orrt(agent.center, route.current_goal(), SAMPLING_PADDING); */
+        /* orrt.grow_tree(250, cs); */
+        /* agent.set_path(orrt.path_to_nearest_node_from_finish()); */
 
         cumulative_duration += (std::clock() - start) / (double)CLOCKS_PER_SEC;
 
@@ -102,8 +102,8 @@ int main(int argc, char** argv) {
 
         // Draw
         cs.draw(sense_viz);
-        orrt.draw(plan_viz);
-        /* vis_graph.draw(plan_viz); */
+        /* orrt.draw(plan_viz); */
+        vis_graph.draw(plan_viz);
         agent.draw(act_viz);
 
         // Sleep

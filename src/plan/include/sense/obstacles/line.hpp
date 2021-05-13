@@ -20,13 +20,8 @@ struct Line {
         if (abs(A.determinant()) < 1e-6) {
             Vec2 e1 = end2 - p1;
             Vec2 e2 = p2 - end1;
-            if (e1.norm() < 1e-6 || e2.norm() < 1e-6 || 1 - abs(e1.normalize().dot(e2.normalize())) < 1e-6) {
-                // Coincident, we will just assume to be intersecting for simplicity
-                return true;
-            } else {
-                // Parallel
-                return false;
-            }
+            // Parallel or Coincident, we will just assume not intersecting for simplicity
+            return false;
         }
         // Ax = b
         Eigen::Vector2f x2f = A.inverse() * b;

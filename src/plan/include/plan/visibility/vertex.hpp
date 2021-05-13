@@ -7,11 +7,11 @@
 struct VisibilityVertex {
     const int id;
     const Vec2 position;
-    std::vector<int> neighbourIds;
+    std::vector<int> neighbour_ids;
 
     VisibilityVertex(const int id, const float x, const float y) : id(id), position(x, y) { reset_search_state(); }
 
-    void add_neighbour(const int id) { neighbourIds.push_back(id); }
+    void add_neighbour(const int id) { neighbour_ids.push_back(id); }
 
     bool is_explored = false;
     float distance_from_start = 0;
