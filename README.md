@@ -82,7 +82,7 @@
 
 | RRT\* | Visibility graph |
 | --- | --- |
-| ![](github/7.cir-orrt.gif) | ![](github/7.cir-orrt.gif) |
+| ![](github/7.cir-orrt.gif) | ![](github/7.cir-vis.gif) |
 
 - Arbitrary path (top down view).
 
