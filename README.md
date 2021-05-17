@@ -17,6 +17,20 @@
 - `catkin_make && rosrun plan plan_node`
 ## demonstration
 
+- Legend
+
+| Object | Description |
+| --- | --- |
+| White circle | Agent's circumcircle |
+| Black line on agent  | Agent's orientation  |
+| Yellow path  | Given path           |
+| Corresponding pink paths   | Padding obstacles in configuration space  |
+| Faint green circle around agent | Sensing region |
+| Inner pink rectangles | Physical obstacle bounding boxes |
+| Outer pink obstacles  | Configuration space obstacle bounding boxes |
+| Green path | Output path |
+| Red circle | Local target position of agent after path optimization |
+
 - Straight path with 2 points.
 
 | RRT\* | Visibility graph |
