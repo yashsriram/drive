@@ -17,7 +17,7 @@
 - `catkin_make && rosrun plan plan_node`
 ## demonstration
 
-- Legend
+- Common legend
 
 | Object | Description |
 | --- | --- |
@@ -30,6 +30,19 @@
 | Outer pink obstacles  | Configuration space obstacle bounding boxes |
 | Green path | Output path |
 | Red circle | Local target position of agent after path optimization |
+
+- RRT\* legend
+
+| Object | Description |
+| --- | --- |
+| Cyan rectangle | Sampling region |
+| White tree | The RRT\* tree |
+
+- Visibility graph legend
+
+| Object | Description |
+| --- | --- |
+| White lines | Visibility graph |
 
 - Straight path with 2 points.
 
