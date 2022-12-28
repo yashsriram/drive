@@ -1,6 +1,12 @@
 +++
 +++
 
+## description
+- Real-time algorithms for following a given path while avoiding initially unknown static obstacles.
+- Uses RRT\* and Visibility graph along with padding obstacles.
+
+## demos
+
 | RRT\* | Visibility graph |
 | --- | --- |
 | ![](github/1.s2p-orrt.gif) | ![](github/1.s2p-vis.gif) |
@@ -87,3 +93,31 @@
 - RRT\* planning frequency vs number of sampled nodes.
 
 ![](github/orrt_hz_nodes.png)
+
+- Common legend
+
+| Object | Description |
+| --- | --- |
+| White circle | Agent's circumcircle |
+| Black line on agent  | Agent's orientation  |
+| Yellow path  | Given path           |
+| Corresponding pink paths   | Padding obstacles in configuration space  |
+| Faint green circle around agent | Sensing region |
+| Inner pink rectangles | Physical obstacle bounding boxes |
+| Outer pink obstacles  | Configuration space obstacle bounding boxes |
+| Green path | Output path |
+| Red circle | Local target position of agent after path optimization |
+
+- RRT\* legend
+
+| Object | Description |
+| --- | --- |
+| Cyan rectangle | Sampling region |
+| White tree | The RRT\* tree |
+
+- Visibility graph legend
+
+| Object | Description |
+| --- | --- |
+| White lines | Visibility graph |
+
