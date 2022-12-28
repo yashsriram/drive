@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Real-time safety-reasonable path following for autonomous vehicles</title>
+    <link rel="icon" type="image/x-icon" href="logo.png">
+
+    <link rel="stylesheet" href="https://unpkg.com/mvp.css@1.12/mvp.css">
+
+    <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+    <script>
+    MathJax = {
+      tex: {
+        inlineMath: [['$', '$'], ['\\(', '\\)']],
+        processEnvironments: false,
+      },
+    };
+    </script>
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+
+    <style>
+      canvas {
+        background: linear-gradient(
+          135deg,
+          white 0%,
+          white 49%,
+          black 49%,
+          black 51%,
+          white 51%,
+          white 100%
+        );
+        background-repeat: repeat;
+        background-size: 20px 20px;
+      }
+
+      nav {
+        margin: 0;
+      }
+
+      header {
+        padding-top: 0;
+        padding-bottom: 0;
+      }
+
+      main {
+        padding-top: 0;
+        padding-bottom: 0;
+      }
+    </style>
+
+    {% block headers %}{% endblock headers %}
+  </head>
+  <body>
+    <header>
+        <nav>
+            <a href="https://yashsriram.github.io/drive/">Real-time safety-reasonable path following for autonomous vehicles</a>
+            <ul>
+                <li><a href="https://yashsriram.github.io/drive/report.pdf">Report</a></li>
+                <li><a href="https://github.com/yashsriram/drive">Github</a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+    {% block content %}{% endblock content %}
+    </main>
+  </body>
+</html>
