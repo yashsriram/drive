@@ -4,31 +4,16 @@
 - Real-time algorithms for following a given path while avoiding initially unknown static obstacles.
 - Uses RRT\* and Visibility graph along with padding obstacles.
 
-| Object | Description |
+<img src="github/9.gen-orrt-vis-sideview.gif" width="100%"/>
+
+| RRT\* planning frequency vs number of sensed obstacles. | Visibility graph planning frequency vs number of sensed obstacles. |
 | --- | --- |
-| White circle | Agent's circumcircle |
-| Black line on agent  | Agent's orientation  |
-| Faint gray path  | Given path           |
-| Corresponding pink paths   | Padding obstacles in configuration space  |
-| Faint green circle around agent | Sensing region |
-| Inner pink rectangles | Physical obstacle bounding boxes |
-| Outer pink obstacles  | Configuration space obstacle bounding boxes |
-| Green path | Output path |
-| Red circle | Local target position of agent after path optimization |
-| Cyan rectangle | Sampling region |
-| White tree | The RRT\* tree |
-| White lines | Visibility graph |
+| <img src="github/orrt_hz_obs.png" width="100%"/> | <img src="github/vis_hz_obs.png" width="100%"/> |
 
 | RRT\* | Visibility graph |
 | --- | --- |
-| Straight path with 2 points. |
-| <img src="github/1.s2p-orrt.gif" width="100%"/> | <img src="github/1.s2p-vis.gif" width="100%"/> |
-| Straight path with 3 points. |
-| <img src="github/1.s3p-orrt.gif" width="100%"/> | <img src="github/1.s3p-vis.gif" width="100%"/> |
 | Straigh path with 5 points.
 | <img src="github/1.s5p-orrt.gif" width="100%"/> | <img src="github/1.s5p-vis.gif" width="100%"/> |
-| Perpendicular turn with 3 points.
-| <img src="github/2.903p-orrt.gif" width="100%"/> | <img src="github/2.903p-vis.gif" width="100%"/> |
 | Perpendicular turn with 5 points.
 | <img src="github/2.905p-orrt.gif" width="100%"/> | <img src="github/2.905p-vis.gif" width="100%"/> |
 | Obstacles.
@@ -50,11 +35,23 @@
 
 <img src="github/9.gen-orrt-vis-sideview.gif" width="100%"/>
 
-| RRT\* planning frequency vs number of sensed obstacles. | Visibility graph planning frequency vs number of sensed obstacles. |
-| --- | --- |
-| <img src="github/orrt_hz_obs.png" width="100%"/> | <img src="github/vis_hz_obs.png" width="100%"/> |
-
 - RRT\* planning frequency vs number of sampled nodes.
 
 <img src="github/orrt_hz_nodes.png" width="100%"/>
+
+| Object | Description |
+| --- | --- |
+| White circle | Agent's circumcircle |
+| Black line on agent  | Agent's orientation  |
+| Faint gray path  | Given path           |
+| Corresponding pink paths   | Padding obstacles in configuration space  |
+| Faint green circle around agent | Sensing region |
+| Inner pink rectangles | Physical obstacle bounding boxes |
+| Outer pink obstacles  | Configuration space obstacle bounding boxes |
+| Green path | Output path |
+| Red circle | Local target position of agent after path optimization |
+| Cyan rectangle | Sampling region |
+| White tree | The RRT\* tree |
+| White lines | Visibility graph |
+
 
